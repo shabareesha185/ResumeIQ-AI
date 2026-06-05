@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { signIn } from "next-auth/react";
+import { Button } from "@/components/ui/button";
 
 export default function LoginPage() {
   const [email, setEmail] = useState("");
@@ -20,6 +21,16 @@ export default function LoginPage() {
 
   return (
     <div className="max-w-md mx-auto mt-20">
+      <Button
+        variant="outline"
+        onClick={() =>
+          signIn("google", {
+            callbackUrl: "/dashboard",
+          })
+        }
+      >
+        Continue with Google
+      </Button>
       <form onSubmit={handleSubmit} className="space-y-4">
         <input
           className="border p-2 w-full"
