@@ -48,6 +48,43 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
     }),
   ],
 
+  callbacks: {
+    async signIn({ user, account }) {
+      if (account.provider === "google") {
+        await connectDB();
+
+        let dbUser = await User.findOne({
+          email: user.email,
+        });
+
+        if (!dbUser) {
+          dbUser = await User.create({
+            name: user.name,
+            email: user.email,
+          });
+        }
+      }
+
+      return true;
+    },
+
+    async session({ session }) {
+      await connectDB();
+
+      const dbUser = await User.findOne({
+        email: session.user.email,
+      });
+
+      if (dbUser) {
+        session.user.id = dbUser._id.toString();
+        session.user.name = dbUser.name;
+        session.user.email = dbUser.email;
+      }
+
+      return session;
+    },
+  },
+
   session: {
     strategy: "jwt",
   },

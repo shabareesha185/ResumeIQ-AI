@@ -12,32 +12,46 @@ import {
   RadialBarChart,
   RadialBar,
 } from "recharts";
-import { UploadCloud, FileText, CheckCircle2, Trash2, Loader2, ArrowRight } from "lucide-react";
+import { UploadCloud, FileText, CheckCircle2, Trash2, Loader2, ArrowRight, AlertCircle } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 
-// Mock history of resume scans
-const scanData = [
-  { name: "Scan 1", score: 45 },
-  { name: "Scan 2", score: 58 },
-  { name: "Scan 3", score: 72 },
-  { name: "Scan 4", score: 85 },
-];
+export default function OverviewCharts({ resumes = [] }) {
+  // Dynamic peak score
+  const maxAtsScore = resumes.length
+    ? Math.max(...resumes.map(r => r.atsScore || 0))
+    : 0;
 
-// Radial chart data for current ATS score
-const radialData = [
-  {
-    name: "Score",
-    value: 85,
-    fill: "#6366f1",
-  },
-];
+  const radialData = [
+    {
+      name: "Score",
+      value: maxAtsScore,
+      fill: "#6366f1",
+    },
+  ];
 
-export default function OverviewCharts() {
+  // Dynamic progress history (sorted by date ascending)
+  const sortedResumes = [...resumes].sort((a, b) => new Date(a.createdAt) - new Date(b.createdAt));
+  const scanData = sortedResumes.length > 0
+    ? sortedResumes.map((r, index) => ({
+        name: r.fileName.length > 10 ? r.fileName.substring(0, 8) + ".." : r.fileName,
+        score: r.atsScore || 0,
+      }))
+    : [
+        { name: "No Data", score: 0 }
+      ];
+
+  // Score status categorization
+  let scoreStatus = "N/A";
+  if (maxAtsScore >= 80) scoreStatus = "Excellent";
+  else if (maxAtsScore >= 60) scoreStatus = "Good";
+  else if (maxAtsScore > 0) scoreStatus = "Improving";
+
   const [file, setFile] = useState(null);
   const [dragActive, setDragActive] = useState(false);
   const [uploading, setUploading] = useState(false);
   const [success, setSuccess] = useState(false);
+  const [error, setError] = useState("");
   
   const fileInputRef = useRef(null);
 
@@ -60,10 +74,14 @@ export default function OverviewCharts() {
       const droppedFile = e.dataTransfer.files[0];
       if (
         droppedFile.type === "application/pdf" ||
-        droppedFile.type === "application/vnd.openxmlformats-officedocument.wordprocessingml.document"
+        droppedFile.type === "application/vnd.openxmlformats-officedocument.wordprocessingml.document" ||
+        droppedFile.name.endsWith(".doc") ||
+        droppedFile.name.endsWith(".docx") ||
+        droppedFile.name.endsWith(".pdf")
       ) {
         setFile(droppedFile);
         setSuccess(false);
+        setError("");
       }
     }
   };
@@ -72,23 +90,45 @@ export default function OverviewCharts() {
     if (e.target.files && e.target.files[0]) {
       setFile(e.target.files[0]);
       setSuccess(false);
+      setError("");
     }
   };
 
-  const handleUploadSubmit = () => {
+  const handleUploadSubmit = async () => {
     if (!file) return;
-    setUploading(true);
     
-    // Simulate upload progress
-    setTimeout(() => {
+    try {
+      setUploading(true);
+      setError("");
+      setSuccess(false);
+
+      const formData = new FormData();
+      formData.append("file", file);
+
+      const response = await fetch("/api/resumes/upload", {
+        method: "POST",
+        body: formData,
+      });
+
+      const data = await response.json();
+
+      if (data.success) {
+        setSuccess(true);
+      } else {
+        setError(data.error || "Failed to upload resume.");
+      }
+    } catch (err) {
+      console.error(err);
+      setError("Server error. Failed to complete file upload.");
+    } finally {
       setUploading(false);
-      setSuccess(true);
-    }, 2000);
+    }
   };
 
   const handleRemoveFile = () => {
     setFile(null);
     setSuccess(false);
+    setError("");
     if (fileInputRef.current) fileInputRef.current.value = "";
   };
 
@@ -164,6 +204,13 @@ export default function OverviewCharts() {
                   )}
                 </div>
 
+                {error && (
+                  <div className="flex items-center gap-2 text-xs text-rose-450 bg-rose-500/10 border border-rose-500/20 p-2.5 rounded-lg">
+                    <AlertCircle className="h-4.5 w-4.5 shrink-0" />
+                    <span className="truncate">{error}</span>
+                  </div>
+                )}
+
                 {success && (
                   <div className="flex items-center gap-2 text-xs text-emerald-400 bg-emerald-500/10 border border-emerald-500/20 p-2.5 rounded-lg">
                     <CheckCircle2 className="h-4 w-4 shrink-0" />
@@ -235,14 +282,16 @@ export default function OverviewCharts() {
               </RadialBarChart>
             </ResponsiveContainer>
             <div className="absolute inset-0 flex flex-col items-center justify-center text-center">
-              <span className="text-4xl font-extrabold text-white">85%</span>
+              <span className="text-4xl font-extrabold text-white">{maxAtsScore}%</span>
               <span className="text-xs text-zinc-500 font-medium tracking-wide uppercase mt-0.5">
-                Excellent
+                {scoreStatus}
               </span>
             </div>
           </div>
           <p className="text-xs text-zinc-400 text-center mt-4 max-w-xs px-2">
-            Your score matches 85% of standard ATS scanner guidelines. Fix formatting gaps to reach 95%.
+            {maxAtsScore > 0
+              ? `Your peak score is ${maxAtsScore}%. Optimize formatting gaps to reach 95%.`
+              : "Upload a resume to calculate your peak match rating."}
           </p>
         </CardContent>
       </Card>
