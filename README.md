@@ -7,30 +7,35 @@ ResumeIQ is a premium, AI-powered career assistant designed to help job seekers 
 ## 🚀 Key Features
 
 ### 1. 🔍 Try Live ATS Scanner (No Login Required)
-* **Instant Guest Scan**: Upload a resume (`.pdf`, `.docx`, `.doc`) directly on the landing page for an instant check.
-* **In-Memory Parsing**: Processes PDFs (via `pdf2json`) and Word files (via `mammoth`) in-memory to ensure zero-delay scoring without saving files to the cloud.
-* **Score Circle**: An animated, color-coded SVG circle that visually charts the ATS compatibility rating.
-* **Analysis Preview**: Displays a sample strength and sample gap parsed by AI, complete with a high-conversion call-to-action button leading to registration.
+
+- **Instant Guest Scan**: Upload a resume (`.pdf`, `.docx`, `.doc`) directly on the landing page for an instant check.
+- **In-Memory Parsing**: Processes PDFs (via `pdf2json`) and Word files (via `mammoth`) in-memory to ensure zero-delay scoring without saving files to the cloud.
+- **Score Circle**: An animated, color-coded SVG circle that visually charts the ATS compatibility rating.
+- **Analysis Preview**: Displays a sample strength and sample gap parsed by AI, complete with a high-conversion call-to-action button leading to registration.
 
 ### 2. 🌗 Persisted Theme Toggle (Dark & Light Mode)
-* **Theme Syncing**: Accessible toggle control available in the settings dashboard and navbars.
-* **FOUC Prevention**: Inline blocking script injected in the document head immediately applies the user's theme preference (`localStorage.theme`) to avoid visual flashes.
-* **Premium Contrast System**: Fully overhauled color palette with custom-tailored dark charcoal HSL shades for light mode text, ensuring excellent readability ratios on white backgrounds.
+
+- **Theme Syncing**: Accessible toggle control available in the settings dashboard and navbars.
+- **FOUC Prevention**: Inline blocking script injected in the document head immediately applies the user's theme preference (`localStorage.theme`) to avoid visual flashes.
+- **Premium Contrast System**: Fully overhauled color palette with custom-tailored dark charcoal HSL shades for light mode text, ensuring excellent readability ratios on white backgrounds.
 
 ### 3. 🛡️ Transactional Upload & AI Analysis
-* **Atomic Pipeline**: Uploading to Cloudinary and writing to MongoDB are blocked until Gemini successfully parses the file and returns a valid ATS JSON payload.
-* **Clean Database**: If Gemini experiences temporary high-demand rate limits (e.g., 503 UNAVAILABLE), the upload fails gracefully on the client side, keeping Cloudinary storage and database records free from empty or un-analyzed resumes.
+
+- **Atomic Pipeline**: Uploading to Cloudinary and writing to MongoDB are blocked until Gemini successfully parses the file and returns a valid ATS JSON payload.
+- **Clean Database**: If Gemini experiences temporary high-demand rate limits (e.g., 503 UNAVAILABLE), the upload fails gracefully on the client side, keeping Cloudinary storage and database records free from empty or un-analyzed resumes.
 
 ### 4. 📊 ATS Scorecard Dashboard
-* **Dynamic Recharts Graphs**: Visualizes score histories using area graphs and graphs peak match ratings with radial gauges.
-* **Granular Scorecards**: Breaks down Gemini's evaluation into:
-  * **Key Strengths** (emerald checkmarks)
-  * **Identified Gaps** (rose alert logs)
-  * **AI Recommendations** (indigo lightbulb cards)
-* **Document Viewer**: Interactive iframe to review uploaded PDFs side-by-side with the scorecard, or run on-demand re-analysis.
+
+- **Dynamic Recharts Graphs**: Visualizes score histories using area graphs and graphs peak match ratings with radial gauges.
+- **Granular Scorecards**: Breaks down Gemini's evaluation into:
+  - **Key Strengths** (emerald checkmarks)
+  - **Identified Gaps** (rose alert logs)
+  - **AI Recommendations** (indigo lightbulb cards)
+- **Document Viewer**: Interactive iframe to review uploaded PDFs side-by-side with the scorecard, or run on-demand re-analysis.
 
 ### 5. 🔑 Secure Credentials & Google OAuth Auth
-* Fully secured routes utilizing `NextAuth` credentials authentication alongside **Google Social Sign-in**.
+
+- Fully secured routes utilizing `NextAuth` credentials authentication alongside **Google Social Sign-in**.
 
 ---
 
@@ -63,14 +68,18 @@ AUTH_GOOGLE_SECRET=your_google_oauth_client_secret
 Get the application running on your local machine by following these instructions:
 
 ### 1. Clone the Repository
+
 Clone the codebase and navigate into the project folder:
+
 ```bash
 git clone https://github.com/shabareesha185/ResumeIQ-AI.git
 cd ResumeIQ-AI
 ```
 
 ### 2. Switch Branches (Optional)
+
 Check the current branch and switch if needed:
+
 ```bash
 # View all local branches
 git branch
@@ -80,20 +89,27 @@ git checkout main
 ```
 
 ### 3. Install Project Dependencies
+
 Use `npm` to install mammoth, genai, next-auth, pdf2json, recharts, and other packages:
+
 ```bash
 npm install
 ```
 
 ### 4. Run Development Server
+
 Start the Next.js local development process:
+
 ```bash
 npm run dev
 ```
+
 Open [http://localhost:3000](http://localhost:3000) inside your web browser to interact with the application.
 
 ### 5. Verify & Build
+
 Run the linter and compile the optimized production bundle locally to guarantee build readiness:
+
 ```bash
 # Check code syntax/rules
 npm run lint
@@ -101,21 +117,3 @@ npm run lint
 # Build production bundle
 npm run build
 ```
-
----
-
-## 🌐 Hosting & Production Deployment
-
-### Option A: Vercel (Recommended)
-Next.js works natively on Vercel:
-1. Push your repository to GitHub.
-2. Sign in to [Vercel](https://vercel.com) and click **Add New Project**.
-3. Import your `ResumeIQ-AI` repository.
-4. Expand the **Environment Variables** accordion and paste all keys from your `.env.local` file.
-5. Click **Deploy**. Vercel will build and assign you a secure public URL.
-
-### Option B: Node Server (Self-Hosted)
-To host the compiled production build on a VPS (e.g. AWS EC2, DigitalOcean, Heroku):
-1. Build the project: `npm run build`.
-2. Start the production server: `npm run start`.
-3. Set your production port (default `3000`) and configure a reverse proxy like Nginx to handle public domain SSL certificates.
