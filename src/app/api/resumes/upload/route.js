@@ -3,7 +3,6 @@ import { NextResponse } from "next/server";
 
 import { connectDB } from "@/lib/db/mongodb";
 import cloudinary from "@/lib/cloudinary";
-import { parsePdf } from "@/lib/parsePdf";
 import { ai } from "@/lib/gemini";
 import mammoth from "mammoth";
 
@@ -30,15 +29,7 @@ export async function POST(request) {
     const bytes = await file.arrayBuffer();
     const buffer = Buffer.from(bytes);
 
-    let parsedText = "";
-    if (file.type === "application/pdf") {
-      parsedText = await parsePdf(buffer);
-    } else if (file.type === "application/vnd.openxmlformats-officedocument.wordprocessingml.document" || file.name.endsWith(".docx")) {
-      const result = await mammoth.extractRawText({ buffer: buffer });
-      parsedText = result.value;
-    }
-
-    // 1. Run Gemini ATS Analysis first
+    // 1. Run Gemini ATS Analysis first (including OCR text parsing)
     let geminiContents = [];
     if (file.type === "application/pdf") {
       geminiContents = [
@@ -58,7 +49,8 @@ export async function POST(request) {
               "score": number,
               "strengths": ["..."],
               "weaknesses": ["..."],
-              "suggestions": ["..."]
+              "suggestions": ["..."],
+              "parsedText": "full accurate text content extracted from this resume, preserving logical flow, sections, and formatting details"
             }
 
             Rules:
@@ -66,19 +58,26 @@ export async function POST(request) {
             - 3 to 5 strengths
             - 3 to 5 weaknesses
             - 3 to 5 suggestions
+            - parsedText: must contain the full parsed textual content of the resume.
             - No markdown
             - No explanation outside JSON
             `,
         },
       ];
     } else {
+      let mammothText = "";
+      if (file.type === "application/vnd.openxmlformats-officedocument.wordprocessingml.document" || file.name.endsWith(".docx")) {
+        const result = await mammoth.extractRawText({ buffer: buffer });
+        mammothText = result.value;
+      }
+
       geminiContents = [
         {
           text: `
             Analyze this resume text for ATS compatibility:
 
             ---
-            ${parsedText}
+            ${mammothText}
             ---
 
             Return ONLY valid JSON.
@@ -87,7 +86,8 @@ export async function POST(request) {
               "score": number,
               "strengths": ["..."],
               "weaknesses": ["..."],
-              "suggestions": ["..."]
+              "suggestions": ["..."],
+              "parsedText": "full clean text content of the resume"
             }
 
             Rules:
@@ -95,6 +95,7 @@ export async function POST(request) {
             - 3 to 5 strengths
             - 3 to 5 weaknesses
             - 3 to 5 suggestions
+            - parsedText: return the cleaned up resume text.
             - No markdown
             - No explanation outside JSON
             `,
@@ -115,6 +116,7 @@ export async function POST(request) {
 
     console.log("Upload route Gemini Response:", cleanText);
     const parsedAnalysis = JSON.parse(cleanText);
+    const parsedText = parsedAnalysis.parsedText || "";
 
     // 2. Upload file to Cloudinary only after analysis succeeds
     const base64File = buffer.toString("base64");

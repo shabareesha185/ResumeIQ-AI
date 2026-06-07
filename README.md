@@ -9,7 +9,7 @@ ResumeIQ is a premium, AI-powered career assistant designed to help job seekers 
 ### 1. 🔍 Try Live ATS Scanner (No Login Required)
 
 - **Instant Guest Scan**: Upload a resume (`.pdf`, `.docx`, `.doc`) directly on the landing page for an instant check.
-- **In-Memory Parsing**: Processes PDFs (via `pdf2json`) and Word files (via `mammoth`) in-memory to ensure zero-delay scoring without saving files to the cloud.
+- **In-Memory Parsing**: Processes PDFs (via Gemini Multimodal parsing) and Word files (via `mammoth`) in-memory to ensure zero-delay scoring without saving files to the cloud.
 - **Score Circle**: An animated, color-coded SVG circle that visually charts the ATS compatibility rating.
 - **Analysis Preview**: Displays a sample strength and sample gap parsed by AI, complete with a high-conversion call-to-action button leading to registration.
 
@@ -90,7 +90,7 @@ git checkout main
 
 ### 3. Install Project Dependencies
 
-Use `npm` to install mammoth, genai, next-auth, pdf2json, recharts, and other packages:
+Use `npm` to install mammoth, genai, next-auth, recharts, and other packages:
 
 ```bash
 npm install

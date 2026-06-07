@@ -85,7 +85,8 @@ export async function POST(request, { params }) {
               "score": number,
               "strengths": ["..."],
               "weaknesses": ["..."],
-              "suggestions": ["..."]
+              "suggestions": ["..."],
+              "parsedText": "full accurate text content extracted from this resume, preserving logical flow, sections, and formatting details"
             }
 
             Rules:
@@ -93,6 +94,7 @@ export async function POST(request, { params }) {
             - 3 to 5 strengths
             - 3 to 5 weaknesses
             - 3 to 5 suggestions
+            - parsedText: must contain the full parsed textual content of the resume.
             - No markdown
             - No explanation outside JSON
             `,
@@ -119,7 +121,8 @@ export async function POST(request, { params }) {
               "score": number,
               "strengths": ["..."],
               "weaknesses": ["..."],
-              "suggestions": ["..."]
+              "suggestions": ["..."],
+              "parsedText": "full clean text content of the resume"
             }
 
             Rules:
@@ -127,6 +130,7 @@ export async function POST(request, { params }) {
             - 3 to 5 strengths
             - 3 to 5 weaknesses
             - 3 to 5 suggestions
+            - parsedText: return the cleaned up resume text.
             - No markdown
             - No explanation outside JSON
             `,
@@ -152,13 +156,10 @@ export async function POST(request, { params }) {
     const parsed = JSON.parse(cleanText);
 
     resume.atsScore = parsed.score || 0;
-
     resume.strengths = parsed.strengths || [];
-
     resume.weaknesses = parsed.weaknesses || [];
-
     resume.suggestions = parsed.suggestions || [];
-
+    resume.parsedText = parsed.parsedText || resume.parsedText;
     resume.analysisCompleted = true;
 
     await resume.save();

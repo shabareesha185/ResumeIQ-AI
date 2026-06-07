@@ -43,8 +43,22 @@ export async function POST(request) {
         const buffer = Buffer.from(arrayBuffer);
         const isPdf = resume.fileType.includes("pdf") || resume.fileName.toLowerCase().endsWith(".pdf");
         if (isPdf) {
-          const { parsePdf } = await import("@/lib/parsePdf");
-          parsedText = await parsePdf(buffer);
+          const base64Pdf = buffer.toString("base64");
+          const response = await ai.models.generateContent({
+            model: "gemini-2.5-flash",
+            contents: [
+              {
+                inlineData: {
+                  mimeType: "application/pdf",
+                  data: base64Pdf,
+                },
+              },
+              {
+                text: "Extract and return only the full, clean, and accurate text content of this resume. Maintain layout ordering and logical reading flow. Do not output anything other than the text content.",
+              },
+            ],
+          });
+          parsedText = response.text || "";
         } else {
           const result = await mammoth.extractRawText({ buffer });
           parsedText = result.value;
