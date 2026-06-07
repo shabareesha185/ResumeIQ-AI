@@ -53,7 +53,7 @@ export default function LoginPage() {
   }
 
   return (
-    <div className="relative flex min-h-screen items-center justify-center bg-black px-4 overflow-hidden">
+    <div className="relative flex min-h-screen items-center justify-center bg-background px-4 overflow-hidden">
       {/* Decorative Glow Blobs */}
       <div className="absolute top-1/4 left-1/4 -translate-x-1/2 -translate-y-1/2 h-80 w-80 rounded-full bg-blue-500/10 blur-3xl pointer-events-none" />
       <div className="absolute bottom-1/4 right-1/4 translate-x-1/2 translate-y-1/2 h-80 w-80 rounded-full bg-purple-500/10 blur-3xl pointer-events-none" />
@@ -71,10 +71,10 @@ export default function LoginPage() {
 
       <Card className="relative z-10 w-full max-w-md border-zinc-800/80 bg-zinc-950/70 backdrop-blur-xl shadow-2xl p-2 rounded-2xl">
         <CardHeader className="space-y-1 text-center pt-8">
-          <Link href="/" className="inline-block text-2xl font-bold tracking-tight text-white mb-2 hover:opacity-90 transition">
+          <Link href="/" className="inline-block text-2xl font-bold tracking-tight text-foreground mb-2 hover:opacity-90 transition">
             ResumeIQ
           </Link>
-          <CardTitle className="text-xl font-semibold tracking-tight text-white">
+          <CardTitle className="text-xl font-semibold tracking-tight text-foreground">
             Welcome back
           </CardTitle>
           <CardDescription className="text-sm text-zinc-400">
@@ -132,7 +132,7 @@ export default function LoginPage() {
                   type="email"
                   required
                   placeholder="name@example.com"
-                  className="pl-10 h-11 border-zinc-800 bg-zinc-900/30 hover:bg-zinc-900/50 text-white placeholder-zinc-500 rounded-xl transition"
+                  className="pl-10 h-11 border-zinc-800 bg-zinc-900/30 hover:bg-zinc-900/50 text-zinc-50 placeholder-zinc-500 rounded-xl transition"
                   value={email}
                   disabled={loading || googleLoading}
                   onChange={(e) => setEmail(e.target.value)}
@@ -155,7 +155,7 @@ export default function LoginPage() {
                   type="password"
                   required
                   placeholder="••••••••"
-                  className="pl-10 h-11 border-zinc-800 bg-zinc-900/30 hover:bg-zinc-900/50 text-white placeholder-zinc-500 rounded-xl transition"
+                  className="pl-10 h-11 border-zinc-800 bg-zinc-900/30 hover:bg-zinc-900/50 text-zinc-50 placeholder-zinc-500 rounded-xl transition"
                   value={password}
                   disabled={loading || googleLoading}
                   onChange={(e) => setPassword(e.target.value)}

@@ -4,6 +4,8 @@ import { NextResponse } from "next/server";
 import { connectDB } from "@/lib/db/mongodb";
 import cloudinary from "@/lib/cloudinary";
 import { parsePdf } from "@/lib/parsePdf";
+import { ai } from "@/lib/gemini";
+import mammoth from "mammoth";
 
 import Resume from "@/models/Resume";
 import User from "@/models/User";
@@ -28,27 +30,93 @@ export async function POST(request) {
     const bytes = await file.arrayBuffer();
     const buffer = Buffer.from(bytes);
 
-    // function cleanResumeText(text) {
-    //   return (
-    //     text
-    //       // Join words where every character is separated
-    //       .replace(/\b(?:[A-Za-z]\s+){2,}[A-Za-z]\b/g, (match) =>
-    //         match.replace(/\s+/g, ""),
-    //       )
-
-    //       // Normalize whitespace
-    //       .replace(/\s+/g, " ")
-
-    //       .trim()
-    //   );
-    // }
-
     let parsedText = "";
     if (file.type === "application/pdf") {
       parsedText = await parsePdf(buffer);
-      // parsedText = cleanResumeText(parsedText);
+    } else if (file.type === "application/vnd.openxmlformats-officedocument.wordprocessingml.document" || file.name.endsWith(".docx")) {
+      const result = await mammoth.extractRawText({ buffer: buffer });
+      parsedText = result.value;
     }
 
+    // 1. Run Gemini ATS Analysis first
+    let geminiContents = [];
+    if (file.type === "application/pdf") {
+      geminiContents = [
+        {
+          inlineData: {
+            mimeType: "application/pdf",
+            data: buffer.toString("base64"),
+          },
+        },
+        {
+          text: `
+            Analyze this resume for ATS compatibility.
+
+            Return ONLY valid JSON.
+
+            {
+              "score": number,
+              "strengths": ["..."],
+              "weaknesses": ["..."],
+              "suggestions": ["..."]
+            }
+
+            Rules:
+            - Score between 0 and 100
+            - 3 to 5 strengths
+            - 3 to 5 weaknesses
+            - 3 to 5 suggestions
+            - No markdown
+            - No explanation outside JSON
+            `,
+        },
+      ];
+    } else {
+      geminiContents = [
+        {
+          text: `
+            Analyze this resume text for ATS compatibility:
+
+            ---
+            ${parsedText}
+            ---
+
+            Return ONLY valid JSON.
+
+            {
+              "score": number,
+              "strengths": ["..."],
+              "weaknesses": ["..."],
+              "suggestions": ["..."]
+            }
+
+            Rules:
+            - Score between 0 and 100
+            - 3 to 5 strengths
+            - 3 to 5 weaknesses
+            - 3 to 5 suggestions
+            - No markdown
+            - No explanation outside JSON
+            `,
+        },
+      ];
+    }
+
+    const geminiResponse = await ai.models.generateContent({
+      model: "gemini-2.5-flash",
+      contents: geminiContents,
+    });
+
+    const text = geminiResponse.text;
+    const cleanText = text
+      .replace(/```json/g, "")
+      .replace(/```/g, "")
+      .trim();
+
+    console.log("Upload route Gemini Response:", cleanText);
+    const parsedAnalysis = JSON.parse(cleanText);
+
+    // 2. Upload file to Cloudinary only after analysis succeeds
     const base64File = buffer.toString("base64");
     const dataUri = `data:${file.type};base64,${base64File}`;
     const fileNameWithoutExtension = file.name.replace(/\.[^/.]+$/, "");
@@ -59,6 +127,7 @@ export async function POST(request) {
       public_id: Date.now() + "-" + fileNameWithoutExtension,
     });
 
+    // 3. Create the database entry with analysis results
     const resume = await Resume.create({
       userId: session.user.id,
       fileName: file.name,
@@ -66,6 +135,11 @@ export async function POST(request) {
       publicId: uploadResult.public_id,
       fileType: file.type,
       parsedText,
+      atsScore: parsedAnalysis.score || 0,
+      strengths: parsedAnalysis.strengths || [],
+      weaknesses: parsedAnalysis.weaknesses || [],
+      suggestions: parsedAnalysis.suggestions || [],
+      analysisCompleted: true,
     });
 
     return NextResponse.json({

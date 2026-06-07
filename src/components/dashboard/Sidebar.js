@@ -61,23 +61,17 @@ export default function Sidebar() {
   const pathname = usePathname();
 
   return (
-    <aside className="hidden md:flex w-72 min-h-screen border-r border-zinc-800 bg-black flex-col">
+    <aside className="hidden md:flex w-72 min-h-screen border-r border-border bg-sidebar text-sidebar-foreground flex-col transition-colors duration-300">
       {/* Logo */}
-      <div className="p-6 border-b border-zinc-800">
-        <h1 className="text-2xl font-bold">ResumeIQ</h1>
+      <div className="p-6 border-b border-border">
+        <h1 className="text-2xl font-bold bg-gradient-to-r from-foreground via-foreground/90 to-zinc-450 bg-clip-text text-transparent">ResumeIQ</h1>
 
-        <p className="mt-1 text-sm text-zinc-500">AI Career Assistant</p>
-        <div className="mt-4 rounded-xl border border-zinc-800 bg-zinc-950 p-4">
-          <p className="text-xs text-zinc-500">Version</p>
+        <p className="mt-1 text-sm text-muted-foreground">AI Career Assistant</p>
+        <div className="mt-4 rounded-xl border border-border bg-card/60 p-4">
+          <p className="text-xs text-muted-foreground">Version</p>
 
-          <p className="mt-1 font-medium">v1.0 Beta</p>
+          <p className="mt-1 font-medium text-foreground">v1.0 Beta</p>
         </div>
-
-        {/* <div className="mt-4 rounded-xl border border-zinc-800 bg-zinc-950 p-4">
-          <p className="text-xs text-zinc-500">Current Plan</p>
-
-          <p className="mt-1 font-medium">Free</p>
-        </div> */}
       </div>
 
       {/* Navigation */}
@@ -93,12 +87,12 @@ export default function Sidebar() {
                 key={item.href}
                 href={item.href}
                 className={`
-                  flex items-center gap-3 rounded-xl px-4 py-3 transition
+                  flex items-center gap-3 rounded-xl px-4 py-3 transition duration-200
                   
                   ${
                     isActive
-                      ? "bg-white text-black font-medium"
-                      : "text-zinc-400 hover:bg-zinc-900 hover:text-white"
+                      ? "bg-zinc-900 text-zinc-50 dark:bg-white dark:text-black font-semibold shadow-sm"
+                      : "text-muted-foreground hover:bg-zinc-100 dark:hover:bg-zinc-900 hover:text-foreground dark:hover:text-white"
                   }
                 `}
               >

@@ -11,7 +11,7 @@ export default async function DashboardLayout({ children }) {
   }
 
   return (
-    <div className="min-h-screen bg-black text-white">
+    <div className="min-h-screen bg-background text-foreground transition-colors duration-300">
       <div className="flex">
         <Sidebar />
 
@@ -20,9 +20,9 @@ export default async function DashboardLayout({ children }) {
           <div
             className="
             absolute inset-0
-            bg-[linear-gradient(to_right,#111_1px,transparent_1px),linear-gradient(to_bottom,#111_1px,transparent_1px)]
+            bg-[linear-gradient(to_right,rgba(120,120,120,0.1)_1px,transparent_1px),linear-gradient(to_bottom,rgba(120,120,120,0.1)_1px,transparent_1px)]
             bg-[size:64px_64px]
-            opacity-20
+            opacity-30
             pointer-events-none
           "
           />

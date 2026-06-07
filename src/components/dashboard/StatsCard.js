@@ -19,7 +19,7 @@ export default function StatsCard({ title, value }) {
           <p className="text-sm font-medium text-zinc-500 tracking-wide uppercase">
             {title}
           </p>
-          <h2 className="text-3xl font-extrabold text-white tracking-tight">
+          <h2 className="text-3xl font-extrabold text-foreground tracking-tight">
             {value}
           </h2>
         </div>

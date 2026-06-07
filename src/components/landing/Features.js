@@ -34,12 +34,12 @@ const features = [
 
 export default function Features() {
   return (
-    <section className="mx-auto max-w-6xl px-6 py-20 md:py-28 bg-black">
+    <section className="mx-auto max-w-6xl px-6 py-20 md:py-28 bg-background transition-colors duration-300">
       <div className="text-center space-y-4 mb-16">
-        <h2 className="text-3xl md:text-5xl font-bold tracking-tight text-white">
+        <h2 className="text-3xl md:text-5xl font-bold tracking-tight text-foreground">
           Powerful AI Features
         </h2>
-        <p className="text-zinc-400 max-w-2xl mx-auto text-sm md:text-base">
+        <p className="text-muted-foreground max-w-2xl mx-auto text-sm md:text-base">
           Everything you need to optimize your career path, bypass automated screeners, and land your dream job.
         </p>
       </div>
@@ -50,19 +50,19 @@ export default function Features() {
           return (
             <Card 
               key={feature.title} 
-              className="group relative overflow-hidden border-zinc-900 bg-zinc-950/40 backdrop-blur-sm transition-all duration-300 hover:border-zinc-800 hover:bg-zinc-900/30 hover:-translate-y-1 rounded-2xl"
+              className="group relative overflow-hidden border-border bg-card backdrop-blur-sm transition-all duration-300 hover:border-zinc-350 dark:hover:border-zinc-800 hover:bg-card/85 hover:-translate-y-1 rounded-2xl hover:shadow-lg"
             >
               <CardContent className="p-8 flex flex-col items-start space-y-4">
                 {/* Glow behind icon */}
-                <div className={`p-3 rounded-xl border border-zinc-800 bg-zinc-900/60 transition-colors duration-300 ${feature.color}`}>
+                <div className={`p-3 rounded-xl border border-border bg-zinc-100 dark:bg-zinc-900/60 transition-colors duration-300 ${feature.color}`}>
                   <Icon className="h-6 w-6 transition-all duration-300" />
                 </div>
 
                 <div className="space-y-2">
-                  <h3 className="font-semibold text-lg text-white group-hover:text-white transition-colors duration-300">
+                  <h3 className="font-semibold text-lg text-foreground transition-colors duration-300">
                     {feature.title}
                   </h3>
-                  <p className="text-sm text-zinc-400 leading-relaxed">
+                  <p className="text-sm text-muted-foreground leading-relaxed">
                     {feature.description}
                   </p>
                 </div>

@@ -6,6 +6,7 @@ import { signOut } from "next-auth/react";
 import { Search, Bell, User, Settings, LogOut } from "lucide-react";
 
 import MobileSidebar from "./MobileSidebar";
+import ThemeToggle from "@/components/ThemeToggle";
 
 import { Input } from "@/components/ui/input";
 
@@ -21,7 +22,7 @@ import {
 
 export default function Navbar({ session }) {
   return (
-    <header className="sticky top-0 z-50 border-b border-zinc-800 bg-black/80 backdrop-blur-sm">
+    <header className="sticky top-0 z-50 border-b border-border bg-background/80 backdrop-blur-sm transition-colors duration-300">
       <div className="flex h-16 items-center justify-between px-4 md:px-8">
         {/* Left Side */}
         <div className="flex items-center gap-4 flex-1">
@@ -31,37 +32,39 @@ export default function Navbar({ session }) {
           <div className="relative hidden md:block w-full max-w-md">
             <Search
               size={16}
-              className="absolute left-3 top-1/2 -translate-y-1/2 text-zinc-500"
+              className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground"
             />
 
             <Input
               placeholder="Search..."
-              className="pl-10 bg-zinc-950 border-zinc-800"
+              className="pl-10 bg-card border-border text-foreground"
             />
           </div>
         </div>
 
         {/* Right Side */}
         <div className="flex items-center gap-3">
+          <ThemeToggle />
+
           {/* Notifications */}
-          <button className="hidden md:flex h-10 w-10 items-center justify-center rounded-lg border border-zinc-800 bg-zinc-950 hover:bg-zinc-900 transition">
+          <button className="hidden md:flex h-10 w-10 items-center justify-center rounded-lg border border-border bg-card hover:bg-zinc-100 dark:hover:bg-zinc-900 text-foreground transition duration-200">
             <Bell size={18} />
           </button>
 
           {/* User Menu */}
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
-              <button className="flex items-center gap-3 rounded-xl border border-zinc-800 bg-zinc-950 px-3 py-2 hover:bg-zinc-900 transition">
+              <button className="flex items-center gap-3 rounded-xl border border-border bg-card px-3 py-2 hover:bg-zinc-100 dark:hover:bg-zinc-900 text-foreground transition duration-200">
                 <div className="hidden lg:block text-right">
                   <p className="text-sm font-medium">{session?.user?.name}</p>
 
-                  <p className="text-xs text-zinc-500">
+                  <p className="text-xs text-muted-foreground">
                     {session?.user?.email}
                   </p>
                 </div>
 
                 <Avatar>
-                  <AvatarFallback>
+                  <AvatarFallback className="bg-zinc-100 dark:bg-zinc-900 text-foreground">
                     {session?.user?.name?.charAt(0).toUpperCase()}
                   </AvatarFallback>
                 </Avatar>
@@ -70,7 +73,7 @@ export default function Navbar({ session }) {
 
             <DropdownMenuContent
               align="end"
-              className="w-56 bg-zinc-950 border-zinc-800"
+              className="w-56 bg-card border-border text-foreground"
             >
               <DropdownMenuItem asChild>
                 <Link href="/profile" className="cursor-pointer">

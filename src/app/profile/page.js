@@ -27,7 +27,7 @@ export default async function ProfilePage() {
 
       {/* Header */}
       <div className="mb-10">
-        <h1 className="text-4xl font-extrabold tracking-tight text-white leading-tight">
+        <h1 className="text-4xl font-extrabold tracking-tight text-foreground leading-tight">
           Profile
         </h1>
         <p className="mt-2 text-zinc-400">
@@ -41,14 +41,14 @@ export default async function ProfilePage() {
           <div className="flex flex-col sm:flex-row items-center gap-6 text-center sm:text-left">
             <div className="relative p-1.5 rounded-full bg-gradient-to-br from-indigo-500 via-purple-500 to-pink-500 shadow-[0_0_15px_rgba(99,102,241,0.2)]">
               <Avatar className="h-20 w-20 border-2 border-zinc-950">
-                <AvatarFallback className="text-2xl font-bold bg-zinc-900 text-white">
+                <AvatarFallback className="text-2xl font-bold bg-zinc-900 text-zinc-50">
                   {session.user.name?.charAt(0).toUpperCase()}
                 </AvatarFallback>
               </Avatar>
             </div>
 
             <div className="space-y-1">
-              <h2 className="text-2xl font-bold text-white tracking-tight">
+              <h2 className="text-2xl font-bold text-foreground tracking-tight">
                 {session.user.name}
               </h2>
               <p className="text-zinc-400 text-sm flex items-center gap-1.5 justify-center sm:justify-start">
@@ -67,7 +67,7 @@ export default async function ProfilePage() {
       {/* Account Information */}
       <Card className="mt-6 border-zinc-900 bg-zinc-950/40 backdrop-blur-sm hover:border-zinc-800 transition duration-300 rounded-xl">
         <CardHeader className="border-b border-zinc-900/60 pb-5">
-          <CardTitle className="text-lg font-bold text-white tracking-tight">
+          <CardTitle className="text-lg font-bold text-foreground tracking-tight">
             Account Information
           </CardTitle>
           <CardDescription className="text-zinc-500">
@@ -142,7 +142,7 @@ export default async function ProfilePage() {
       {/* Security */}
       <Card className="mt-6 border-zinc-900 bg-zinc-950/40 backdrop-blur-sm hover:border-zinc-800 transition duration-300 rounded-xl">
         <CardHeader>
-          <CardTitle className="text-lg font-bold text-white tracking-tight flex items-center gap-2">
+          <CardTitle className="text-lg font-bold text-foreground tracking-tight flex items-center gap-2">
             <Lock className="h-4 w-4 text-zinc-400" />
             Security & Access
           </CardTitle>
@@ -152,7 +152,7 @@ export default async function ProfilePage() {
         </CardHeader>
 
         <CardContent className="pt-2">
-          <Button variant="outline" className="border-zinc-800 hover:bg-zinc-900/60 text-zinc-300 hover:text-white h-10 px-5 rounded-lg transition">
+          <Button variant="outline" className="border-zinc-800 hover:bg-zinc-900/60 text-zinc-300 hover:text-zinc-50 h-10 px-5 rounded-lg transition">
             Change Password
           </Button>
         </CardContent>

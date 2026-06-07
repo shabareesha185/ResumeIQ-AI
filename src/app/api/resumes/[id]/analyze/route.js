@@ -3,6 +3,7 @@ import { NextResponse } from "next/server";
 
 import { connectDB } from "@/lib/db/mongodb";
 import { ai } from "@/lib/gemini";
+import mammoth from "mammoth";
 
 import Resume from "@/models/Resume";
 
@@ -52,8 +53,7 @@ export async function POST(request, { params }) {
       );
     }
 
-    // Download PDF from Cloudinary
-
+    // Download file from Cloudinary
     const fileResponse = await fetch(resume.fileUrl);
 
     if (!fileResponse.ok) {
@@ -61,20 +61,20 @@ export async function POST(request, { params }) {
     }
 
     const arrayBuffer = await fileResponse.arrayBuffer();
+    const buffer = Buffer.from(arrayBuffer);
 
-    const base64Pdf = Buffer.from(arrayBuffer).toString("base64");
+    const isPdf = resume.fileType.includes("pdf") || resume.fileName.toLowerCase().endsWith(".pdf");
 
-    const response = await ai.models.generateContent({
-      model: "gemini-2.5-flash",
-
-      contents: [
+    let geminiContents = [];
+    if (isPdf) {
+      const base64Pdf = buffer.toString("base64");
+      geminiContents = [
         {
           inlineData: {
             mimeType: "application/pdf",
             data: base64Pdf,
           },
         },
-
         {
           text: `
             Analyze this resume for ATS compatibility.
@@ -97,7 +97,46 @@ export async function POST(request, { params }) {
             - No explanation outside JSON
             `,
         },
-      ],
+      ];
+    } else {
+      let parsedText = resume.parsedText;
+      if (!parsedText) {
+        const result = await mammoth.extractRawText({ buffer });
+        parsedText = result.value;
+      }
+      geminiContents = [
+        {
+          text: `
+            Analyze this resume text for ATS compatibility:
+
+            ---
+            ${parsedText}
+            ---
+
+            Return ONLY valid JSON.
+
+            {
+              "score": number,
+              "strengths": ["..."],
+              "weaknesses": ["..."],
+              "suggestions": ["..."]
+            }
+
+            Rules:
+            - Score between 0 and 100
+            - 3 to 5 strengths
+            - 3 to 5 weaknesses
+            - 3 to 5 suggestions
+            - No markdown
+            - No explanation outside JSON
+            `,
+        },
+      ];
+    }
+
+    const response = await ai.models.generateContent({
+      model: "gemini-2.5-flash",
+      contents: geminiContents,
     });
 
     const text = response.text;

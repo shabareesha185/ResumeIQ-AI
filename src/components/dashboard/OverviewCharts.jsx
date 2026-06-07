@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useRef } from "react";
+import { useRouter } from "next/navigation";
 import {
   AreaChart,
   Area,
@@ -17,6 +18,8 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 
 export default function OverviewCharts({ resumes = [] }) {
+  const router = useRouter();
+  const [statusText, setStatusText] = useState("");
   // Dynamic peak score
   const maxAtsScore = resumes.length
     ? Math.max(...resumes.map(r => r.atsScore || 0))
@@ -101,6 +104,7 @@ export default function OverviewCharts({ resumes = [] }) {
       setUploading(true);
       setError("");
       setSuccess(false);
+      setStatusText("Uploading and analyzing resume with AI...");
 
       const formData = new FormData();
       formData.append("file", file);
@@ -114,8 +118,10 @@ export default function OverviewCharts({ resumes = [] }) {
 
       if (data.success) {
         setSuccess(true);
+        setStatusText("Analysis completed successfully!");
+        router.refresh();
       } else {
-        setError(data.error || "Failed to upload resume.");
+        setError(data.error || "Failed to upload and analyze resume.");
       }
     } catch (err) {
       console.error(err);
@@ -138,7 +144,7 @@ export default function OverviewCharts({ resumes = [] }) {
       <Card className="lg:col-span-1 bg-zinc-950/40 border-zinc-900 rounded-xl relative overflow-hidden flex flex-col justify-between">
         <div>
           <CardHeader>
-            <CardTitle className="text-lg font-semibold text-white">Upload Resume</CardTitle>
+            <CardTitle className="text-lg font-semibold text-foreground">Upload Resume</CardTitle>
             <CardDescription className="text-zinc-500">
               PDF or DOCX formats only. Max size 5MB.
             </CardDescription>
@@ -214,7 +220,7 @@ export default function OverviewCharts({ resumes = [] }) {
                 {success && (
                   <div className="flex items-center gap-2 text-xs text-emerald-400 bg-emerald-500/10 border border-emerald-500/20 p-2.5 rounded-lg">
                     <CheckCircle2 className="h-4 w-4 shrink-0" />
-                    <span>Upload succeeded! Analyzing in background.</span>
+                    <span>{statusText || "Analysis completed successfully!"}</span>
                   </div>
                 )}
 
@@ -227,7 +233,7 @@ export default function OverviewCharts({ resumes = [] }) {
                     {uploading ? (
                       <>
                         <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                        Analyzing...
+                        {statusText || "Analyzing..."}
                       </>
                     ) : (
                       <>
@@ -256,7 +262,7 @@ export default function OverviewCharts({ resumes = [] }) {
       {/* Score Radial Chart */}
       <Card className="lg:col-span-1 bg-zinc-950/40 border-zinc-900 rounded-xl relative overflow-hidden flex flex-col justify-between">
         <CardHeader>
-          <CardTitle className="text-lg font-semibold text-white">Target ATS Score</CardTitle>
+          <CardTitle className="text-lg font-semibold text-foreground">Target ATS Score</CardTitle>
           <CardDescription className="text-zinc-500">
             Current peak match rating.
           </CardDescription>
@@ -282,7 +288,7 @@ export default function OverviewCharts({ resumes = [] }) {
               </RadialBarChart>
             </ResponsiveContainer>
             <div className="absolute inset-0 flex flex-col items-center justify-center text-center">
-              <span className="text-4xl font-extrabold text-white">{maxAtsScore}%</span>
+              <span className="text-4xl font-extrabold text-foreground">{maxAtsScore}%</span>
               <span className="text-xs text-zinc-500 font-medium tracking-wide uppercase mt-0.5">
                 {scoreStatus}
               </span>
@@ -299,7 +305,7 @@ export default function OverviewCharts({ resumes = [] }) {
       {/* Score Area Chart */}
       <Card className="lg:col-span-1 bg-zinc-950/40 border-zinc-900 rounded-xl relative overflow-hidden flex flex-col justify-between">
         <CardHeader>
-          <CardTitle className="text-lg font-semibold text-white">Progress History</CardTitle>
+          <CardTitle className="text-lg font-semibold text-foreground">Progress History</CardTitle>
           <CardDescription className="text-zinc-500">
             ATS Score improvement over time.
           </CardDescription>
@@ -331,10 +337,10 @@ export default function OverviewCharts({ resumes = [] }) {
               />
               <Tooltip
                 contentStyle={{
-                  backgroundColor: "#09090b",
-                  borderColor: "#27272a",
+                  backgroundColor: "var(--popover)",
+                  borderColor: "var(--border)",
                   borderRadius: "8px",
-                  color: "#fff",
+                  color: "var(--popover-foreground)",
                   fontSize: "12px",
                 }}
               />

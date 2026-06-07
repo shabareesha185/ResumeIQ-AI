@@ -63,7 +63,7 @@ export default async function DashboardPage() {
 
       {/* Hero Section */}
       <section className="relative z-10">
-        <h1 className="text-4xl md:text-5xl font-extrabold tracking-tight text-white leading-tight">
+        <h1 className="text-4xl md:text-5xl font-extrabold tracking-tight text-foreground leading-tight">
           Build a stronger career with AI
         </h1>
 
@@ -80,7 +80,7 @@ export default async function DashboardPage() {
           </Link>
 
           <Link href="/resumes/upload">
-            <button className="rounded-lg border border-zinc-800 bg-zinc-950 px-5 py-2.5 text-zinc-300 hover:text-white text-sm hover:bg-zinc-900 transition active:scale-98 cursor-pointer">
+            <button className="rounded-lg border border-zinc-800 bg-zinc-950 px-5 py-2.5 text-zinc-300 hover:text-zinc-50 text-sm hover:bg-zinc-900 transition active:scale-98 cursor-pointer">
               Upload Resume
             </button>
           </Link>
@@ -90,7 +90,7 @@ export default async function DashboardPage() {
       {/* Stats Cards Section */}
       <section className="mt-12">
         <div className="flex items-center justify-between">
-          <h2 className="text-lg font-bold text-white tracking-tight">System Overview</h2>
+          <h2 className="text-lg font-bold text-foreground tracking-tight">System Overview</h2>
         </div>
 
         <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4 mt-6">
@@ -108,7 +108,7 @@ export default async function DashboardPage() {
       <section className="mt-12 pb-10">
         <div className="flex items-center gap-2 mb-6">
           <Activity className="h-5 w-5 text-indigo-400" />
-          <h2 className="text-lg font-bold text-white tracking-tight">Recent Activity</h2>
+          <h2 className="text-lg font-bold text-foreground tracking-tight">Recent Activity</h2>
         </div>
 
         {recentActivities.length === 0 ? (
@@ -143,7 +143,7 @@ export default async function DashboardPage() {
                   <span className="text-xs text-zinc-500">
                     {getRelativeTime(resume.createdAt)}
                   </span>
-                  <Link href={`/resumes/${resume._id}`} className="text-zinc-500 hover:text-white transition">
+                  <Link href={`/resumes/${resume._id}`} className="text-zinc-500 hover:text-zinc-50 transition">
                     <ChevronRight className="h-4 w-4" />
                   </Link>
                 </div>

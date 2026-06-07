@@ -3,7 +3,7 @@ import Navbar from "@/components/dashboard/Navbar";
 import { auth } from "@/auth";
 import { redirect } from "next/navigation";
 
-export default async function SettingsLayout({ children }) {
+export default async function AnalysisLayout({ children }) {
   const session = await auth();
 
   if (!session) {

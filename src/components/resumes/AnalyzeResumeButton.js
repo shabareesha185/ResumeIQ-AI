@@ -40,7 +40,7 @@ export default function AnalyzeResumeButton({ resumeId }) {
       variant="outline"
       onClick={handleAnalyze}
       disabled={loading}
-      className="w-full border-zinc-800 hover:bg-zinc-900 hover:text-white h-11 rounded-xl flex items-center justify-center gap-2 transition duration-200 text-zinc-300"
+      className="w-full border-zinc-800 hover:bg-zinc-900 hover:text-zinc-50 h-11 rounded-xl flex items-center justify-center gap-2 transition duration-200 text-zinc-300"
     >
       <Sparkles className="h-4 w-4 text-indigo-400" />
 

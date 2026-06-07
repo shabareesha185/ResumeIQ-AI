@@ -105,7 +105,7 @@ export default function UploadResumePage() {
 
     try {
       setLoading(true);
-      setStatus({ type: "info", message: "Uploading your resume to secure storage..." });
+      setStatus({ type: "info", message: "Uploading and running AI ATS analysis..." });
 
       const formData = new FormData();
       formData.append("file", file);
@@ -120,10 +120,9 @@ export default function UploadResumePage() {
       if (data.success) {
         setStatus({
           type: "success",
-          message: "Resume uploaded and processed successfully! Redirecting...",
+          message: "Resume uploaded and analyzed successfully! Redirecting...",
         });
         
-        // Wait briefly so the user sees the success state before redirect
         setTimeout(() => {
           router.push("/resumes");
           router.refresh();
@@ -131,14 +130,14 @@ export default function UploadResumePage() {
       } else {
         setStatus({
           type: "error",
-          message: data.error || "An error occurred during upload.",
+          message: data.error || "An error occurred during upload or analysis.",
         });
       }
     } catch (error) {
       console.error(error);
       setStatus({
         type: "error",
-        message: "Server error. Failed to complete file upload.",
+        message: "Server error. Failed to upload and analyze resume.",
       });
     } finally {
       setLoading(false);
@@ -154,7 +153,7 @@ export default function UploadResumePage() {
       <div>
         <Link 
           href="/resumes" 
-          className="inline-flex items-center gap-1 text-sm text-zinc-400 hover:text-white transition duration-200"
+          className="inline-flex items-center gap-1 text-sm text-zinc-400 hover:text-zinc-50 transition duration-200"
         >
           <ArrowLeft className="h-4 w-4" />
           Back to Resumes
@@ -163,7 +162,7 @@ export default function UploadResumePage() {
 
       {/* Header */}
       <div>
-        <h1 className="text-4xl font-extrabold tracking-tight bg-gradient-to-r from-white via-zinc-200 to-zinc-400 bg-clip-text text-transparent">
+        <h1 className="text-4xl font-extrabold tracking-tight bg-gradient-to-r from-foreground via-foreground/90 to-zinc-450 bg-clip-text text-transparent">
           Upload Resume
         </h1>
         <p className="mt-2 text-zinc-400">
@@ -227,7 +226,7 @@ export default function UploadResumePage() {
                   <UploadCloud className="h-10 w-10 text-indigo-400" />
                 </div>
                 <div className="space-y-1">
-                  <p className="text-lg font-bold text-white">
+                  <p className="text-lg font-bold text-foreground">
                     Drag and drop file here
                   </p>
                   <p className="text-zinc-400 text-sm">
@@ -246,7 +245,7 @@ export default function UploadResumePage() {
                     <FileText className="h-6 w-6" />
                   </div>
                   <div className="truncate max-w-[200px] sm:max-w-[280px]">
-                    <p className="text-sm font-bold text-white truncate">
+                    <p className="text-sm font-bold text-foreground truncate">
                       {file.name}
                     </p>
                     <p className="text-xs text-zinc-500 mt-0.5">

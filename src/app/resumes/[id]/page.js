@@ -66,7 +66,7 @@ export default async function ResumeDetailsPage({ params }) {
       <div className="flex items-center justify-between">
         <Link
           href="/resumes"
-          className="inline-flex items-center gap-1.5 text-sm text-zinc-400 hover:text-white transition duration-200"
+          className="inline-flex items-center gap-1.5 text-sm text-zinc-400 hover:text-zinc-50 transition duration-200"
         >
           <ArrowLeft className="h-4 w-4" />
           Back to Resumes
@@ -88,7 +88,7 @@ export default async function ResumeDetailsPage({ params }) {
                   href={resume.fileUrl}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="text-xs text-zinc-400 hover:text-white flex items-center gap-1 transition"
+                  className="text-xs text-zinc-400 hover:text-zinc-50 flex items-center gap-1 transition"
                   title="Open PDF in new tab"
                 >
                   <ExternalLink className="h-3 w-3" />
@@ -106,7 +106,7 @@ export default async function ResumeDetailsPage({ params }) {
               <div className="p-4 rounded-full bg-blue-500/10 text-blue-400 border border-blue-500/20 mb-6">
                 <FileText className="h-12 w-12" />
               </div>
-              <h3 className="text-xl font-bold text-white tracking-tight">
+              <h3 className="text-xl font-bold text-foreground tracking-tight">
                 Word Preview Unavailable
               </h3>
               <p className="mt-3 text-zinc-400 text-sm max-w-md leading-relaxed">
@@ -140,7 +140,7 @@ export default async function ResumeDetailsPage({ params }) {
                   {isPdf ? "PDF Document" : "Word Document"}
                 </span>
                 <h2
-                  className="text-2xl font-bold text-white tracking-tight mt-3 truncate"
+                  className="text-2xl font-bold text-foreground tracking-tight mt-3 truncate"
                   title={resume.fileName}
                 >
                   {resume.fileName}
@@ -172,7 +172,7 @@ export default async function ResumeDetailsPage({ params }) {
                     {score}%
                   </div>
                   <div>
-                    <h5 className="font-bold text-white text-sm">
+                    <h5 className="font-bold text-foreground text-sm">
                       {scoreStatus}
                     </h5>
                     <p className="text-xs text-zinc-400 mt-0.5">
@@ -217,7 +217,7 @@ export default async function ResumeDetailsPage({ params }) {
                 <ShieldCheck className="h-5 w-5 text-emerald-450 shrink-0 mt-0.5" />
               )}
               <div className="space-y-1">
-                <h5 className="text-xs font-bold text-white uppercase tracking-wide">
+                <h5 className="text-xs font-bold text-foreground uppercase tracking-wide">
                   Optimize your chances
                 </h5>
                 <p className="text-xs text-zinc-500 leading-relaxed">

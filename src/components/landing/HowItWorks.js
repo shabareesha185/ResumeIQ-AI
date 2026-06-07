@@ -26,12 +26,12 @@ const steps = [
 
 export default function HowItWorks() {
   return (
-    <section className="mx-auto max-w-6xl px-6 py-20 md:py-28 bg-black relative">
+    <section className="mx-auto max-w-6xl px-6 py-20 md:py-28 bg-background relative transition-colors duration-300">
       <div className="text-center space-y-4 mb-20">
-        <h2 className="text-3xl md:text-5xl font-bold tracking-tight text-white">
+        <h2 className="text-3xl md:text-5xl font-bold tracking-tight text-foreground">
           Simple 3-Step Process
         </h2>
-        <p className="text-zinc-400 max-w-xl mx-auto text-sm md:text-base">
+        <p className="text-muted-foreground max-w-xl mx-auto text-sm md:text-base">
           Start optimizing your resume in minutes and land more interviews.
         </p>
       </div>
@@ -40,27 +40,27 @@ export default function HowItWorks() {
         {steps.map((step, index) => {
           const Icon = step.icon;
           return (
-            <div key={step.number} className="relative flex flex-col p-6 rounded-2xl border border-zinc-900 bg-zinc-950/20 hover:border-zinc-800 transition duration-300">
+            <div key={step.number} className="relative flex flex-col p-6 rounded-2xl border border-border bg-card hover:border-zinc-350 dark:hover:border-zinc-800 transition duration-300 hover:shadow-md">
               {/* Step indicator */}
-              <div className="absolute top-4 right-6 text-5xl md:text-6xl font-extrabold text-zinc-900 select-none">
+              <div className="absolute top-4 right-6 text-5xl md:text-6xl font-extrabold text-foreground/10 select-none">
                 {step.number}
               </div>
 
-              <div className="flex items-center justify-center h-12 w-12 rounded-xl bg-zinc-900 border border-zinc-800 text-zinc-300 mb-6">
+              <div className="flex items-center justify-center h-12 w-12 rounded-xl bg-zinc-100 dark:bg-zinc-900 border border-border text-foreground mb-6">
                 <Icon className="h-5 w-5" />
               </div>
 
-              <h3 className="text-xl font-bold text-white mb-3">
+              <h3 className="text-xl font-bold text-foreground mb-3">
                 {step.title}
               </h3>
 
-              <p className="text-sm text-zinc-400 leading-relaxed">
+              <p className="text-sm text-muted-foreground leading-relaxed">
                 {step.description}
               </p>
 
               {/* Decorative connector for large screens */}
               {index < steps.length - 1 && (
-                <div className="hidden md:block absolute top-12 -right-4 w-8 h-[2px] bg-gradient-to-r from-zinc-800 to-transparent z-0" />
+                <div className="hidden md:block absolute top-12 -right-4 w-8 h-[2px] bg-gradient-to-r from-zinc-200 to-transparent dark:from-zinc-800 dark:to-transparent z-0" />
               )}
             </div>
           );

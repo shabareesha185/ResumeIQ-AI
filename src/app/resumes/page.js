@@ -55,7 +55,7 @@ export default async function ResumesPage() {
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
-          <h1 className="text-4xl font-extrabold tracking-tight bg-gradient-to-r from-white via-zinc-200 to-zinc-400 bg-clip-text text-transparent">
+          <h1 className="text-4xl font-extrabold tracking-tight bg-gradient-to-r from-foreground via-foreground/90 to-zinc-450 bg-clip-text text-transparent">
             My Resumes
           </h1>
           <p className="mt-2 text-zinc-400">
@@ -81,7 +81,7 @@ export default async function ResumesPage() {
               </div>
               <div>
                 <p className="text-xs font-semibold text-zinc-500 uppercase tracking-wider">Total Resumes</p>
-                <h3 className="text-2xl font-bold mt-1 text-white">{totalResumes}</h3>
+                <h3 className="text-2xl font-bold mt-1 text-foreground">{totalResumes}</h3>
               </div>
             </CardContent>
           </Card>
@@ -93,7 +93,7 @@ export default async function ResumesPage() {
               </div>
               <div>
                 <p className="text-xs font-semibold text-zinc-500 uppercase tracking-wider">Average ATS Score</p>
-                <h3 className="text-2xl font-bold mt-1 text-white">{avgAtsScore}%</h3>
+                <h3 className="text-2xl font-bold mt-1 text-foreground">{avgAtsScore}%</h3>
               </div>
             </CardContent>
           </Card>
@@ -105,7 +105,7 @@ export default async function ResumesPage() {
               </div>
               <div>
                 <p className="text-xs font-semibold text-zinc-500 uppercase tracking-wider">Highest ATS Score</p>
-                <h3 className="text-2xl font-bold mt-1 text-white">{maxAtsScore}%</h3>
+                <h3 className="text-2xl font-bold mt-1 text-foreground">{maxAtsScore}%</h3>
               </div>
             </CardContent>
           </Card>
@@ -119,7 +119,7 @@ export default async function ResumesPage() {
             <div className="p-4 rounded-full bg-indigo-500/5 border border-indigo-500/10 text-indigo-400 mb-6 animate-pulse">
               <Upload className="h-10 w-10" />
             </div>
-            <h2 className="text-2xl font-bold text-white tracking-tight">No Resumes Uploaded Yet</h2>
+            <h2 className="text-2xl font-bold text-foreground tracking-tight">No Resumes Uploaded Yet</h2>
             <p className="mt-3 text-zinc-400 text-sm leading-relaxed">
               Upload your resume in PDF or Word format to receive real-time ATS analysis and optimization suggestions.
             </p>
@@ -210,7 +210,7 @@ export default async function ResumesPage() {
                             <Button 
                               size="sm" 
                               variant="outline"
-                              className="border-zinc-800 hover:bg-zinc-900 text-zinc-300 hover:text-white flex items-center gap-1.5 transition"
+                              className="border-zinc-800 hover:bg-zinc-900 text-zinc-300 hover:text-zinc-50 flex items-center gap-1.5 transition"
                             >
                               <Eye className="h-3.5 w-3.5" />
                               View
