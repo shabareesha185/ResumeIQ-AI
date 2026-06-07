@@ -3,6 +3,7 @@ import { NextResponse } from "next/server";
 
 import { connectDB } from "@/lib/db/mongodb";
 import cloudinary from "@/lib/cloudinary";
+import { parsePdf } from "@/lib/parsePdf";
 
 import Resume from "@/models/Resume";
 import User from "@/models/User";
@@ -18,7 +19,6 @@ export async function POST(request) {
     await connectDB();
 
     const formData = await request.formData();
-
     const file = formData.get("file");
 
     if (!file) {
@@ -28,10 +28,29 @@ export async function POST(request) {
     const bytes = await file.arrayBuffer();
     const buffer = Buffer.from(bytes);
 
+    // function cleanResumeText(text) {
+    //   return (
+    //     text
+    //       // Join words where every character is separated
+    //       .replace(/\b(?:[A-Za-z]\s+){2,}[A-Za-z]\b/g, (match) =>
+    //         match.replace(/\s+/g, ""),
+    //       )
+
+    //       // Normalize whitespace
+    //       .replace(/\s+/g, " ")
+
+    //       .trim()
+    //   );
+    // }
+
+    let parsedText = "";
+    if (file.type === "application/pdf") {
+      parsedText = await parsePdf(buffer);
+      // parsedText = cleanResumeText(parsedText);
+    }
+
     const base64File = buffer.toString("base64");
-
     const dataUri = `data:${file.type};base64,${base64File}`;
-
     const fileNameWithoutExtension = file.name.replace(/\.[^/.]+$/, "");
     const uploadResult = await cloudinary.uploader.upload(dataUri, {
       resource_type: "auto",
@@ -46,6 +65,7 @@ export async function POST(request) {
       fileUrl: uploadResult.secure_url,
       publicId: uploadResult.public_id,
       fileType: file.type,
+      parsedText,
     });
 
     return NextResponse.json({

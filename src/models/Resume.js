@@ -37,6 +37,26 @@ const ResumeSchema = new mongoose.Schema(
       type: Number,
       default: 0,
     },
+
+    strengths: {
+      type: [String],
+      default: [],
+    },
+
+    weaknesses: {
+      type: [String],
+      default: [],
+    },
+
+    suggestions: {
+      type: [String],
+      default: [],
+    },
+
+    analysisCompleted: {
+      type: Boolean,
+      default: false,
+    },
   },
   {
     timestamps: true,
