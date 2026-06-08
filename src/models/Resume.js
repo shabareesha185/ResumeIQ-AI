@@ -28,6 +28,11 @@ const ResumeSchema = new mongoose.Schema(
       required: true,
     },
 
+    resourceType: {
+      type: String,
+      default: "auto",
+    },
+
     parsedText: {
       type: String,
       default: "",

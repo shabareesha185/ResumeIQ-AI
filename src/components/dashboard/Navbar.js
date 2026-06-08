@@ -1,5 +1,7 @@
 "use client";
 
+import { useState } from "react";
+import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { signOut } from "next-auth/react";
 
@@ -21,6 +23,16 @@ import {
 } from "@/components/ui/dropdown-menu";
 
 export default function Navbar({ session }) {
+  const router = useRouter();
+  const [searchQuery, setSearchQuery] = useState("");
+
+  const handleSearchKeyDown = (e) => {
+    if (e.key === "Enter" && searchQuery.trim()) {
+      router.push(`/resumes?search=${encodeURIComponent(searchQuery.trim())}`);
+      setSearchQuery("");
+    }
+  };
+
   return (
     <header className="sticky top-0 z-50 border-b border-border bg-background/80 backdrop-blur-sm transition-colors duration-300">
       <div className="flex h-16 items-center justify-between px-4 md:px-8">
@@ -36,8 +48,11 @@ export default function Navbar({ session }) {
             />
 
             <Input
-              placeholder="Search..."
-              className="pl-10 bg-card border-border text-foreground"
+              placeholder="Search resumes..."
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              onKeyDown={handleSearchKeyDown}
+              className="pl-10 bg-card border-border text-foreground focus-visible:ring-indigo-500/50"
             />
           </div>
         </div>

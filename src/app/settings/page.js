@@ -11,12 +11,41 @@ import {
 
 import { Switch } from "@/components/ui/switch";
 import { Button } from "@/components/ui/button";
-import { Mail, Briefcase, Moon, Sun, ShieldAlert } from "lucide-react";
+import { Input } from "@/components/ui/input";
+import { Mail, Briefcase, Moon, Sun, ShieldAlert, Loader2 } from "lucide-react";
+import { signOut } from "next-auth/react";
 
 export default function SettingsPage() {
   const [emailAlerts, setEmailAlerts] = useState(true);
   const [jobAlerts, setJobAlerts] = useState(false);
   const [darkMode, setDarkMode] = useState(true);
+  const [showConfirm, setShowConfirm] = useState(false);
+  const [confirmText, setConfirmText] = useState("");
+  const [deleting, setDeleting] = useState(false);
+  const [error, setError] = useState("");
+
+  const handleDeleteAccount = async () => {
+    if (confirmText !== "DELETE") return;
+    setDeleting(true);
+    setError("");
+
+    try {
+      const res = await fetch("/api/profile/delete", {
+        method: "DELETE",
+      });
+
+      const data = await res.json();
+
+      if (!res.ok) {
+        throw new Error(data.error || "Failed to delete account");
+      }
+
+      await signOut({ callbackUrl: "/" });
+    } catch (err) {
+      setError(err.message);
+      setDeleting(false);
+    }
+  };
 
   // Initialize theme from document element on mount
   useEffect(() => {
@@ -134,16 +163,78 @@ export default function SettingsPage() {
           </CardDescription>
         </CardHeader>
 
-        <CardContent className="pt-6 flex flex-col sm:flex-row items-center justify-between gap-4 p-6 rounded-b-xl">
-          <div className="text-center sm:text-left">
-            <p className="font-semibold text-sm text-foreground">Delete Account</p>
-            <p className="text-xs text-rose-500/70 max-w-md mt-0.5">
-              This will permanently delete your user profile, uploads, cover letters, and history. This action cannot be undone.
-            </p>
-          </div>
-          <Button variant="destructive" className="bg-rose-500/15 text-rose-600 dark:text-rose-400 border border-rose-500/30 hover:bg-rose-550 hover:text-white font-semibold transition shrink-0 h-10 px-5 rounded-lg active:scale-98">
-            Delete Account
-          </Button>
+        <CardContent className="pt-6 p-6 rounded-b-xl space-y-4">
+          {error && (
+            <div className="p-3 rounded-lg border text-sm bg-rose-500/10 border-rose-500/20 text-rose-400">
+              {error}
+            </div>
+          )}
+
+          {!showConfirm ? (
+            <div className="flex flex-col sm:flex-row items-center justify-between gap-4">
+              <div className="text-center sm:text-left">
+                <p className="font-semibold text-sm text-foreground">Delete Account</p>
+                <p className="text-xs text-rose-500/70 max-w-md mt-0.5">
+                  This will permanently delete your user profile, uploads, cover letters, and history. This action cannot be undone.
+                </p>
+              </div>
+              <Button
+                onClick={() => setShowConfirm(true)}
+                variant="destructive"
+                className="bg-rose-500/15 text-rose-600 dark:text-rose-400 border border-rose-500/30 hover:bg-rose-600 hover:text-white font-semibold transition shrink-0 h-10 px-5 rounded-lg active:scale-98"
+              >
+                Delete Account
+              </Button>
+            </div>
+          ) : (
+            <div className="space-y-4 max-w-md">
+              <div className="p-3 rounded-lg bg-rose-500/10 border border-rose-500/20 text-xs text-rose-400">
+                Are you absolutely sure? This action is irreversible. All of your resumes, cover letters, and profile details will be permanently wiped.
+              </div>
+              <div className="space-y-2">
+                <label className="text-xs font-semibold text-zinc-400 uppercase tracking-wider">
+                  Type <span className="text-rose-400 font-bold">DELETE</span> to confirm
+                </label>
+                <Input
+                  type="text"
+                  value={confirmText}
+                  onChange={(e) => setConfirmText(e.target.value)}
+                  placeholder="DELETE"
+                  required
+                  className="bg-zinc-950/60 border-zinc-900 focus:border-rose-500/50 text-foreground"
+                />
+              </div>
+              <div className="flex items-center gap-3">
+                <Button
+                  onClick={handleDeleteAccount}
+                  disabled={confirmText !== "DELETE" || deleting}
+                  variant="destructive"
+                  className="bg-rose-600 hover:bg-rose-700 text-white font-semibold h-10 px-4 rounded-lg transition active:scale-98"
+                >
+                  {deleting ? (
+                    <>
+                      <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                      Deleting...
+                    </>
+                  ) : (
+                    "Permanently Delete"
+                  )}
+                </Button>
+                <Button
+                  onClick={() => {
+                    setShowConfirm(false);
+                    setConfirmText("");
+                    setError("");
+                  }}
+                  variant="outline"
+                  disabled={deleting}
+                  className="border-zinc-800 hover:bg-zinc-900/60 text-zinc-300 hover:text-zinc-50 h-10 px-4 rounded-lg transition"
+                >
+                  Cancel
+                </Button>
+              </div>
+            </div>
+          )}
         </CardContent>
       </Card>
     </div>

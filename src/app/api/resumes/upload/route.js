@@ -136,6 +136,7 @@ export async function POST(request) {
       fileUrl: uploadResult.secure_url,
       publicId: uploadResult.public_id,
       fileType: file.type,
+      resourceType: uploadResult.resource_type || "auto",
       parsedText,
       atsScore: parsedAnalysis.score || 0,
       strengths: parsedAnalysis.strengths || [],

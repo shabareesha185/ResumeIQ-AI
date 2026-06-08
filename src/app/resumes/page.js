@@ -26,24 +26,34 @@ import {
   TableRow,
 } from "@/components/ui/table";
 
-export default async function ResumesPage() {
+export default async function ResumesPage({ searchParams }) {
   const session = await auth();
+
+  const params = await searchParams;
+  const search = params?.search || "";
 
   await connectDB();
 
-  const resumes = await Resume.find({
-    userId: session.user.id,
-  }).sort({
+  // Get total count for user statistics
+  const allResumes = await Resume.find({ userId: session.user.id });
+  const totalResumesCount = allResumes.length;
+
+  const query = { userId: session.user.id };
+  if (search) {
+    query.fileName = { $regex: search, $options: "i" };
+  }
+
+  const resumes = await Resume.find(query).sort({
     createdAt: -1,
   });
 
   // Calculate quick stats
   const totalResumes = resumes.length;
-  const avgAtsScore = totalResumes
-    ? Math.round(resumes.reduce((acc, curr) => acc + (curr.atsScore || 0), 0) / totalResumes)
+  const avgAtsScore = totalResumesCount
+    ? Math.round(allResumes.reduce((acc, curr) => acc + (curr.atsScore || 0), 0) / totalResumesCount)
     : 0;
-  const maxAtsScore = totalResumes
-    ? Math.max(...resumes.map(r => r.atsScore || 0))
+  const maxAtsScore = totalResumesCount
+    ? Math.max(...allResumes.map(r => r.atsScore || 0))
     : 0;
 
   return (
@@ -71,7 +81,7 @@ export default async function ResumesPage() {
         </Link>
       </div>
 
-      {totalResumes > 0 && (
+      {totalResumesCount > 0 && (
         /* Stats Overview */
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-5">
           <Card className="border-zinc-900 bg-zinc-950/40 backdrop-blur-sm hover:border-zinc-800 transition duration-300 rounded-xl">
@@ -81,7 +91,7 @@ export default async function ResumesPage() {
               </div>
               <div>
                 <p className="text-xs font-semibold text-zinc-500 uppercase tracking-wider">Total Resumes</p>
-                <h3 className="text-2xl font-bold mt-1 text-foreground">{totalResumes}</h3>
+                <h3 className="text-2xl font-bold mt-1 text-foreground">{totalResumesCount}</h3>
               </div>
             </CardContent>
           </Card>
@@ -116,19 +126,38 @@ export default async function ResumesPage() {
         /* Empty State */
         <Card className="border-zinc-900 bg-zinc-950/30 backdrop-blur-sm py-16 hover:border-zinc-800/80 transition duration-300 rounded-2xl border-dashed">
           <CardContent className="flex flex-col items-center justify-center text-center max-w-md mx-auto">
-            <div className="p-4 rounded-full bg-indigo-500/5 border border-indigo-500/10 text-indigo-400 mb-6 animate-pulse">
-              <Upload className="h-10 w-10" />
-            </div>
-            <h2 className="text-2xl font-bold text-foreground tracking-tight">No Resumes Uploaded Yet</h2>
-            <p className="mt-3 text-zinc-400 text-sm leading-relaxed">
-              Upload your resume in PDF or Word format to receive real-time ATS analysis and optimization suggestions.
-            </p>
-            <Link href="/resumes/upload" className="mt-8">
-              <Button className="bg-white hover:bg-zinc-200 text-black font-semibold h-11 px-6 rounded-xl transition duration-300 flex items-center gap-2 group">
-                Upload First Resume
-                <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" />
-              </Button>
-            </Link>
+            {search ? (
+              <>
+                <div className="p-4 rounded-full bg-indigo-500/5 border border-indigo-500/10 text-indigo-400 mb-6">
+                  <FileText className="h-10 w-10" />
+                </div>
+                <h2 className="text-2xl font-bold text-foreground tracking-tight">No Results Found</h2>
+                <p className="mt-3 text-zinc-400 text-sm leading-relaxed">
+                  We couldn&apos;t find any resumes matching &ldquo;{search}&rdquo;. Try another term.
+                </p>
+                <Link href="/resumes" className="mt-8">
+                  <Button className="bg-white hover:bg-zinc-200 text-black font-semibold h-11 px-6 rounded-xl transition duration-300">
+                    Clear Search Query
+                  </Button>
+                </Link>
+              </>
+            ) : (
+              <>
+                <div className="p-4 rounded-full bg-indigo-500/5 border border-indigo-500/10 text-indigo-400 mb-6 animate-pulse">
+                  <Upload className="h-10 w-10" />
+                </div>
+                <h2 className="text-2xl font-bold text-foreground tracking-tight">No Resumes Uploaded Yet</h2>
+                <p className="mt-3 text-zinc-400 text-sm leading-relaxed">
+                  Upload your resume in PDF or Word format to receive real-time ATS analysis and optimization suggestions.
+                </p>
+                <Link href="/resumes/upload" className="mt-8">
+                  <Button className="bg-white hover:bg-zinc-200 text-black font-semibold h-11 px-6 rounded-xl transition duration-300 flex items-center gap-2 group">
+                    Upload First Resume
+                    <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" />
+                  </Button>
+                </Link>
+              </>
+            )}
           </CardContent>
         </Card>
       ) : (

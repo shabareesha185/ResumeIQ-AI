@@ -1,5 +1,9 @@
 import { auth } from "@/auth";
 import { redirect } from "next/navigation";
+import Link from "next/link";
+import { connectDB } from "@/lib/db/mongodb";
+import UserModel from "@/models/User";
+import ChangePasswordModal from "@/components/profile/ChangePasswordModal";
 
 import {
   Card,
@@ -19,6 +23,16 @@ export default async function ProfilePage() {
   if (!session) {
     redirect("/login");
   }
+
+  await connectDB();
+  const dbUser = await UserModel.findById(session.user.id);
+  const isCredentials = dbUser?.provider === "credentials";
+  const memberSince = dbUser?.createdAt
+    ? new Date(dbUser.createdAt).toLocaleDateString("en-US", {
+        month: "long",
+        year: "numeric",
+      })
+    : "June 2026";
 
   return (
     <div className="mx-auto max-w-4xl relative">
@@ -58,9 +72,11 @@ export default async function ProfilePage() {
             </div>
           </div>
 
-          <Button className="bg-white hover:bg-zinc-200 text-black font-semibold px-5 h-10 rounded-lg transition active:scale-98">
-            Edit Profile
-          </Button>
+          <Link href="/profile/edit">
+            <Button className="bg-white hover:bg-zinc-200 text-black font-semibold px-5 h-10 rounded-lg transition active:scale-98">
+              Edit Profile
+            </Button>
+          </Link>
         </CardContent>
       </Card>
 
@@ -114,7 +130,7 @@ export default async function ProfilePage() {
                   Provider
                 </p>
                 <p className="mt-1 font-semibold text-sm text-zinc-200 flex items-center gap-1.5">
-                  Credentials
+                  {dbUser?.provider === "google" ? "Google Account" : "Credentials"}
                   <span className="inline-flex items-center rounded-full bg-emerald-500/10 px-1.5 py-0.5 text-[10px] font-medium text-emerald-400 border border-emerald-500/20">
                     Verified
                   </span>
@@ -131,7 +147,7 @@ export default async function ProfilePage() {
                   Member Since
                 </p>
                 <p className="mt-1 font-semibold text-sm text-zinc-200">
-                  June 2026
+                  {memberSince}
                 </p>
               </div>
             </div>
@@ -152,9 +168,13 @@ export default async function ProfilePage() {
         </CardHeader>
 
         <CardContent className="pt-2">
-          <Button variant="outline" className="border-zinc-800 hover:bg-zinc-900/60 text-zinc-300 hover:text-zinc-50 h-10 px-5 rounded-lg transition">
-            Change Password
-          </Button>
+          {isCredentials ? (
+            <ChangePasswordModal />
+          ) : (
+            <p className="text-sm text-zinc-500">
+              Social login accounts manage their security credentials via their identity provider (Google).
+            </p>
+          )}
         </CardContent>
       </Card>
     </div>
