@@ -19,27 +19,7 @@ export default function CoverLetterDetails({ coverLetter }) {
   };
 
   const handlePrint = () => {
-    const printWindow = window.open("", "_blank");
-    printWindow.document.write(`
-      <html>
-        <head>
-          <title>${coverLetter.title}</title>
-          <style>
-            body {
-              font-family: 'Times New Roman', Times, serif, Arial, sans-serif;
-              line-height: 1.6;
-              color: #000000;
-              margin: 40px;
-              font-size: 12pt;
-              white-space: pre-wrap;
-            }
-          </style>
-        </head>
-        <body>${coverLetter.content}</body>
-      </html>
-    `);
-    printWindow.document.close();
-    printWindow.print();
+    window.print();
   };
 
   const handleDelete = async () => {
@@ -67,7 +47,7 @@ export default function CoverLetterDetails({ coverLetter }) {
   return (
     <div className="space-y-6 max-w-4xl mx-auto">
       {/* Navigation and Actions */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 no-print">
         <div className="flex items-center gap-4">
           <Link
             href="/cover-letter/history"
@@ -134,7 +114,7 @@ export default function CoverLetterDetails({ coverLetter }) {
       </div>
 
       {/* Meta Card */}
-      <Card className="border-zinc-900 bg-zinc-950/20 backdrop-blur-sm rounded-xl p-5">
+      <Card className="border-zinc-900 bg-zinc-950/20 backdrop-blur-sm rounded-xl p-5 no-print">
         <div className="flex flex-wrap items-center gap-6 text-sm text-zinc-450">
           <div className="flex items-center gap-2">
             <Building className="h-4 w-4 text-zinc-500" />
@@ -161,8 +141,8 @@ export default function CoverLetterDetails({ coverLetter }) {
       </Card>
 
       {/* Letter paper preview */}
-      <Card className="border-zinc-900 bg-zinc-950/60 shadow-2xl rounded-xl overflow-hidden">
-        <CardContent className="p-8 md:p-12 text-zinc-300 whitespace-pre-wrap font-serif text-base leading-relaxed select-text tracking-wide bg-zinc-950">
+      <Card className="border-zinc-900 bg-zinc-950/60 shadow-2xl rounded-xl overflow-hidden printable-card">
+        <CardContent className="p-8 md:p-12 text-zinc-300 whitespace-pre-wrap font-serif text-base leading-relaxed select-text tracking-wide bg-zinc-950 printable-content">
           {coverLetter.content}
         </CardContent>
       </Card>

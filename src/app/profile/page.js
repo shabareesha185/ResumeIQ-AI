@@ -3,7 +3,6 @@ import { redirect } from "next/navigation";
 import Link from "next/link";
 import { connectDB } from "@/lib/db/mongodb";
 import UserModel from "@/models/User";
-import ChangePasswordModal from "@/components/profile/ChangePasswordModal";
 
 import {
   Card,
@@ -13,7 +12,7 @@ import {
   CardDescription,
 } from "@/components/ui/card";
 
-import { Avatar, AvatarFallback } from "@/components/ui/avatar";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { User, Mail, ShieldAlert, Calendar, ShieldCheck, Lock } from "lucide-react";
 
@@ -35,7 +34,7 @@ export default async function ProfilePage() {
     : "June 2026";
 
   return (
-    <div className="mx-auto max-w-4xl relative">
+    <div className="mx-auto max-w-4xl relative animate-fade-in-up">
       {/* Decorative Glow */}
       <div className="absolute top-0 right-10 h-72 w-72 rounded-full bg-indigo-500/5 blur-3xl pointer-events-none" />
 
@@ -50,11 +49,14 @@ export default async function ProfilePage() {
       </div>
 
       {/* User Card */}
-      <Card className="border-zinc-900 bg-zinc-950/40 backdrop-blur-sm hover:border-zinc-800 transition duration-300 rounded-xl overflow-hidden">
+      <Card className="border-zinc-900 bg-zinc-950/40 backdrop-blur-sm hover-glow-card rounded-xl overflow-hidden">
         <CardContent className="flex flex-col sm:flex-row items-center justify-between gap-6 p-8">
           <div className="flex flex-col sm:flex-row items-center gap-6 text-center sm:text-left">
             <div className="relative p-1.5 rounded-full bg-gradient-to-br from-indigo-500 via-purple-500 to-pink-500 shadow-[0_0_15px_rgba(99,102,241,0.2)]">
               <Avatar className="h-20 w-20 border-2 border-zinc-950">
+                {dbUser?.image && (
+                  <AvatarImage src={dbUser.image} alt={dbUser.name} />
+                )}
                 <AvatarFallback className="text-2xl font-bold bg-zinc-900 text-zinc-50">
                   {session.user.name?.charAt(0).toUpperCase()}
                 </AvatarFallback>
@@ -169,7 +171,11 @@ export default async function ProfilePage() {
 
         <CardContent className="pt-2">
           {isCredentials ? (
-            <ChangePasswordModal />
+            <Link href="/profile/change-password">
+              <Button variant="outline" className="border-zinc-800 hover:bg-zinc-900/60 text-zinc-300 hover:text-zinc-50 h-10 px-5 rounded-lg transition">
+                Change Password
+              </Button>
+            </Link>
           ) : (
             <p className="text-sm text-zinc-500">
               Social login accounts manage their security credentials via their identity provider (Google).

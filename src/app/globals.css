@@ -170,3 +170,105 @@ body {
     @apply font-sans;
   }
 }
+
+@media print {
+  /* Hide all dashboard chrome: sidebars, navbars, header elements, buttons, links, decorative panels */
+  aside, header, nav, button, a, .no-print, [role="navigation"] {
+    display: none !important;
+  }
+  
+  /* Reset body and container backgrounds/borders for printing */
+  html, body, main, div, .relative, .max-w-4xl, .mx-auto {
+    background: white !important;
+    color: black !important;
+    border: none !important;
+    box-shadow: none !important;
+    padding: 0 !important;
+    margin: 0 !important;
+    width: 100% !important;
+    max-width: 100% !important;
+    position: static !important;
+    overflow: visible !important;
+  }
+
+  /* Target the card to expand full page and look like a standard document */
+  .printable-card {
+    background: white !important;
+    color: black !important;
+    border: none !important;
+    box-shadow: none !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    width: 100% !important;
+  }
+
+  .printable-content {
+    background: white !important;
+    color: black !important;
+    font-family: 'Times New Roman', Times, serif, Arial, sans-serif !important;
+    font-size: 12pt !important;
+    line-height: 1.6 !important;
+    white-space: pre-wrap !important;
+    padding: 0 !important;
+    margin: 0 !important;
+  }
+}
+
+/* UI Animations and Micro-interactions */
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(16px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes scaleUp {
+  from {
+    opacity: 0;
+    transform: scale(0.97);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+.animate-fade-in-up {
+  animation: fadeInUp 0.5s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+.animate-fade-in {
+  animation: fadeIn 0.4s ease-out forwards;
+}
+
+.animate-scale-up {
+  animation: scaleUp 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+/* Premium Hover Glow Card */
+.hover-glow-card {
+  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.hover-glow-card:hover {
+  transform: translateY(-2px) scale(1.01);
+  box-shadow: 0 12px 30px -10px rgba(0, 0, 0, 0.4), 0 0 15px 1px rgba(99, 102, 241, 0.08);
+  border-color: rgba(99, 102, 241, 0.35) !important;
+}
+
+.hover-glow-card:active {
+  transform: translateY(0) scale(0.99);
+}

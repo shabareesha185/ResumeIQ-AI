@@ -50,33 +50,13 @@ export default function CoverLetterForm({ initialResumes }) {
   };
 
   const handlePrint = () => {
-    const printWindow = window.open("", "_blank");
-    printWindow.document.write(`
-      <html>
-        <head>
-          <title>${coverLetter.title}</title>
-          <style>
-            body {
-              font-family: 'Times New Roman', Times, serif, Arial, sans-serif;
-              line-height: 1.6;
-              color: #000000;
-              margin: 40px;
-              font-size: 12pt;
-              white-space: pre-wrap;
-            }
-          </style>
-        </head>
-        <body>${coverLetter.content}</body>
-      </html>
-    `);
-    printWindow.document.close();
-    printWindow.print();
+    window.print();
   };
 
   if (coverLetter) {
     return (
       <div className="space-y-6">
-        <div className="flex items-center justify-between">
+        <div className="flex items-center justify-between no-print">
           <Button
             onClick={() => setCoverLetter(null)}
             variant="outline"
@@ -116,8 +96,8 @@ export default function CoverLetterForm({ initialResumes }) {
         </div>
 
         {/* Paper Sheet Preview */}
-        <Card className="border-zinc-900 bg-zinc-950/60 shadow-2xl rounded-xl overflow-hidden max-w-3xl mx-auto">
-          <CardContent className="p-8 md:p-12 text-zinc-300 whitespace-pre-wrap font-serif text-base leading-relaxed select-text tracking-wide bg-zinc-950">
+        <Card className="border-zinc-900 bg-zinc-950/60 shadow-2xl rounded-xl overflow-hidden max-w-3xl mx-auto printable-card">
+          <CardContent className="p-8 md:p-12 text-zinc-300 whitespace-pre-wrap font-serif text-base leading-relaxed select-text tracking-wide bg-zinc-950 printable-content">
             {coverLetter.content}
           </CardContent>
         </Card>

@@ -1,18 +1,14 @@
 "use client";
 
-import { useState } from "react";
-import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { signOut } from "next-auth/react";
 
-import { Search, Bell, User, Settings, LogOut } from "lucide-react";
+import { Bell, User, Settings, LogOut } from "lucide-react";
 
 import MobileSidebar from "./MobileSidebar";
 import ThemeToggle from "@/components/ThemeToggle";
 
-import { Input } from "@/components/ui/input";
-
-import { Avatar, AvatarFallback } from "@/components/ui/avatar";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 
 import {
   DropdownMenu,
@@ -23,38 +19,12 @@ import {
 } from "@/components/ui/dropdown-menu";
 
 export default function Navbar({ session }) {
-  const router = useRouter();
-  const [searchQuery, setSearchQuery] = useState("");
-
-  const handleSearchKeyDown = (e) => {
-    if (e.key === "Enter" && searchQuery.trim()) {
-      router.push(`/resumes?search=${encodeURIComponent(searchQuery.trim())}`);
-      setSearchQuery("");
-    }
-  };
-
   return (
     <header className="sticky top-0 z-50 border-b border-border bg-background/80 backdrop-blur-sm transition-colors duration-300">
       <div className="flex h-16 items-center justify-between px-4 md:px-8">
         {/* Left Side */}
         <div className="flex items-center gap-4 flex-1">
           <MobileSidebar />
-
-          {/* Search */}
-          <div className="relative hidden md:block w-full max-w-md">
-            <Search
-              size={16}
-              className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground"
-            />
-
-            <Input
-              placeholder="Search resumes..."
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              onKeyDown={handleSearchKeyDown}
-              className="pl-10 bg-card border-border text-foreground focus-visible:ring-indigo-500/50"
-            />
-          </div>
         </div>
 
         {/* Right Side */}
@@ -79,6 +49,9 @@ export default function Navbar({ session }) {
                 </div>
 
                 <Avatar>
+                  {session?.user?.image && (
+                    <AvatarImage src={session.user.image} alt={session.user.name} />
+                  )}
                   <AvatarFallback className="bg-zinc-100 dark:bg-zinc-900 text-foreground">
                     {session?.user?.name?.charAt(0).toUpperCase()}
                   </AvatarFallback>

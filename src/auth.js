@@ -61,7 +61,20 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
           dbUser = await User.create({
             name: user.name,
             email: user.email,
+            image: user.image,
+            provider: "google",
           });
+        } else {
+          // Keep google oauth image synchronized if no custom image is set
+          let updated = false;
+          if (account.provider === "google" && !dbUser.image) {
+            dbUser.image = user.image;
+            dbUser.provider = "google";
+            updated = true;
+          }
+          if (updated) {
+            await dbUser.save();
+          }
         }
       }
 
@@ -79,6 +92,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
         session.user.id = dbUser._id.toString();
         session.user.name = dbUser.name;
         session.user.email = dbUser.email;
+        session.user.image = dbUser.image || "";
       }
 
       return session;
