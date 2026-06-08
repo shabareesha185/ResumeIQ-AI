@@ -3,7 +3,7 @@ import { NextResponse } from "next/server";
 import { connectDB } from "@/lib/db/mongodb";
 import Resume from "@/models/Resume";
 import CoverLetter from "@/models/CoverLetter";
-import { ai } from "@/lib/gemini";
+import { ai, GEMINI_MODEL } from "@/lib/gemini";
 
 export async function POST(request) {
   try {
@@ -55,7 +55,7 @@ export async function POST(request) {
     `;
 
     const geminiResponse = await ai.models.generateContent({
-      model: "gemini-2.5-flash",
+      model: GEMINI_MODEL,
       contents: [{ text: prompt }],
     });
 
@@ -82,8 +82,17 @@ export async function POST(request) {
     });
   } catch (error) {
     console.error("Cover letter generation error:", error);
+    let errorMessage = error.message || "Failed to generate cover letter";
+    if (
+      errorMessage.toLowerCase().includes("quota") ||
+      errorMessage.toLowerCase().includes("rate limit") ||
+      errorMessage.toLowerCase().includes("429") ||
+      error.status === "RESOURCE_EXHAUSTED"
+    ) {
+      errorMessage = "AI rate limit reached. Please wait a few seconds and try again.";
+    }
     return NextResponse.json(
-      { error: error.message || "Failed to generate cover letter" },
+      { error: errorMessage },
       { status: 500 }
     );
   }

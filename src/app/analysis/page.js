@@ -136,7 +136,7 @@ export default async function ATSAnalysisPage() {
   }
 
   return (
-    <div className="space-y-8 max-w-6xl mx-auto relative">
+    <div className="space-y-8 max-w-6xl mx-auto relative animate-fade-in-up">
       {/* Decorative Glow */}
       <div className="absolute top-[-10%] right-[-10%] h-96 w-96 rounded-full bg-indigo-500/5 blur-3xl pointer-events-none" />
       <div className="absolute bottom-[-10%] left-[-10%] h-96 w-96 rounded-full bg-emerald-500/5 blur-3xl pointer-events-none" />
@@ -161,10 +161,10 @@ export default async function ATSAnalysisPage() {
       </div>
 
       {/* Highlights Section (Score & Metadata) */}
-      <div className="grid grid-cols-1 md:grid-cols-12 gap-6">
+      <div className="grid grid-cols-1 gap-6">
         
         {/* Score Ring Display */}
-        <Card className="md:col-span-7 lg:col-span-8 border-border bg-card/45 backdrop-blur-sm rounded-2xl overflow-hidden">
+        <Card className="border-border bg-card/45 backdrop-blur-sm rounded-2xl overflow-hidden hover-glow-card">
           <CardContent className="p-8 flex flex-col sm:flex-row items-center gap-8 justify-center sm:justify-start">
             <div className={`h-28 w-28 shrink-0 rounded-2xl border-2 flex flex-col items-center justify-center text-4xl font-extrabold shadow-lg ${scoreBadgeClass}`}>
               <span>{score}%</span>
@@ -182,7 +182,7 @@ export default async function ATSAnalysisPage() {
         </Card>
 
         {/* Current Document Summary */}
-        <Card className="md:col-span-5 lg:col-span-4 border-border bg-card/45 backdrop-blur-sm rounded-2xl overflow-hidden flex flex-col justify-between">
+        <Card className="border-border bg-card/45 backdrop-blur-sm rounded-2xl overflow-hidden flex flex-col justify-between hover-glow-card">
           <CardHeader className="pb-2">
             <span className="text-xs font-bold uppercase tracking-wider text-muted-foreground">Analyzed Document</span>
             <CardTitle className="text-lg font-bold text-foreground mt-1 truncate" title={latestResume.fileName}>
@@ -207,10 +207,10 @@ export default async function ATSAnalysisPage() {
       </div>
 
       {/* Analysis Grid (Strengths, Weaknesses, Suggestions) */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+      <div className="grid grid-cols-1 gap-6">
         
         {/* Strengths Card */}
-        <Card className="border-border bg-card/45 backdrop-blur-sm rounded-2xl overflow-hidden hover:border-emerald-500/20 transition duration-300">
+        <Card className="border-border bg-card/45 backdrop-blur-sm rounded-2xl overflow-hidden hover-glow-card">
           <CardHeader className="border-b border-border/60 pb-4">
             <CardTitle className="flex items-center gap-2.5 text-lg font-bold text-foreground">
               <div className="p-1.5 rounded-lg bg-emerald-500/10 text-emerald-500 border border-emerald-500/20">
@@ -236,7 +236,7 @@ export default async function ATSAnalysisPage() {
         </Card>
 
         {/* Weaknesses Card */}
-        <Card className="border-border bg-card/45 backdrop-blur-sm rounded-2xl overflow-hidden hover:border-rose-500/20 transition duration-300">
+        <Card className="border-border bg-card/45 backdrop-blur-sm rounded-2xl overflow-hidden hover-glow-card">
           <CardHeader className="border-b border-border/60 pb-4">
             <CardTitle className="flex items-center gap-2.5 text-lg font-bold text-foreground">
               <div className="p-1.5 rounded-lg bg-rose-500/10 text-rose-500 border border-rose-500/20">
@@ -262,7 +262,7 @@ export default async function ATSAnalysisPage() {
         </Card>
 
         {/* Suggestions Card */}
-        <Card className="border-border bg-card/45 backdrop-blur-sm rounded-2xl overflow-hidden hover:border-indigo-500/20 transition duration-300">
+        <Card className="border-border bg-card/45 backdrop-blur-sm rounded-2xl overflow-hidden hover-glow-card">
           <CardHeader className="border-b border-border/60 pb-4">
             <CardTitle className="flex items-center gap-2.5 text-lg font-bold text-foreground">
               <div className="p-1.5 rounded-lg bg-indigo-500/10 text-indigo-400 border border-indigo-500/20">

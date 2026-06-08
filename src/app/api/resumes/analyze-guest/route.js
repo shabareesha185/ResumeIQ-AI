@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { ai } from "@/lib/gemini";
+import { ai, GEMINI_MODEL } from "@/lib/gemini";
 import mammoth from "mammoth";
 
 export async function POST(request) {
@@ -89,7 +89,7 @@ export async function POST(request) {
     }
 
     const geminiResponse = await ai.models.generateContent({
-      model: "gemini-2.5-flash",
+      model: GEMINI_MODEL,
       contents: geminiContents,
     });
 
@@ -108,11 +108,20 @@ export async function POST(request) {
     });
   } catch (error) {
     console.error("Guest Analysis Error:", error);
+    let errorMessage = error.message || "Failed to analyze resume";
+    if (
+      errorMessage.toLowerCase().includes("quota") ||
+      errorMessage.toLowerCase().includes("rate limit") ||
+      errorMessage.toLowerCase().includes("429") ||
+      error.status === "RESOURCE_EXHAUSTED"
+    ) {
+      errorMessage = "AI rate limit reached. Please wait a few seconds and try again.";
+    }
 
     return NextResponse.json(
       {
         success: false,
-        error: error.message,
+        error: errorMessage,
       },
       {
         status: 500,

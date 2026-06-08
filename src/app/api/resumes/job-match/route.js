@@ -1,7 +1,7 @@
 import { auth } from "@/auth";
 import { NextResponse } from "next/server";
 import { connectDB } from "@/lib/db/mongodb";
-import { ai } from "@/lib/gemini";
+import { ai, GEMINI_MODEL } from "@/lib/gemini";
 import Resume from "@/models/Resume";
 import mammoth from "mammoth";
 
@@ -45,7 +45,7 @@ export async function POST(request) {
         if (isPdf) {
           const base64Pdf = buffer.toString("base64");
           const response = await ai.models.generateContent({
-            model: "gemini-2.5-flash",
+            model: GEMINI_MODEL,
             contents: [
               {
                 inlineData: {
@@ -77,7 +77,7 @@ export async function POST(request) {
 
     // Call Gemini for comparison
     const response = await ai.models.generateContent({
-      model: "gemini-2.5-flash",
+      model: GEMINI_MODEL,
       contents: [
         {
           text: `
@@ -127,8 +127,17 @@ export async function POST(request) {
     });
   } catch (error) {
     console.error("Job Match Error:", error);
+    let errorMessage = error.message || "Failed to compare job match";
+    if (
+      errorMessage.toLowerCase().includes("quota") ||
+      errorMessage.toLowerCase().includes("rate limit") ||
+      errorMessage.toLowerCase().includes("429") ||
+      error.status === "RESOURCE_EXHAUSTED"
+    ) {
+      errorMessage = "AI rate limit reached. Please wait a few seconds and try again.";
+    }
     return NextResponse.json(
-      { success: false, error: error.message },
+      { success: false, error: errorMessage },
       { status: 500 }
     );
   }

@@ -1,4 +1,4 @@
-import { ai } from "@/lib/gemini";
+import { ai, GEMINI_MODEL } from "@/lib/gemini";
 
 export async function analyzeResumePdf(fileUrl) {
   const response = await fetch(fileUrl);
@@ -12,7 +12,7 @@ export async function analyzeResumePdf(fileUrl) {
   const base64Pdf = Buffer.from(arrayBuffer).toString("base64");
 
   const result = await ai.models.generateContent({
-    model: "gemini-2.5-flash",
+    model: GEMINI_MODEL,
 
     contents: [
       {
