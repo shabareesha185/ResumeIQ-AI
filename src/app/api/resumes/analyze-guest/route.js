@@ -91,6 +91,9 @@ export async function POST(request) {
     const geminiResponse = await ai.models.generateContent({
       model: GEMINI_MODEL,
       contents: geminiContents,
+      config: {
+        responseMimeType: "application/json",
+      },
     });
 
     const text = geminiResponse.text;

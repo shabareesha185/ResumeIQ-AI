@@ -19,17 +19,23 @@ export default function AnalyzeResumeButton({ resumeId }) {
         method: "POST",
       });
 
-      const data = await response.json();
+      let data;
+      const contentType = response.headers.get("content-type");
+      if (contentType && contentType.includes("application/json")) {
+        data = await response.json();
+      } else {
+        const text = await response.text();
+        throw new Error(text || `Server error: ${response.status} ${response.statusText}`);
+      }
 
-      if (!data.success) {
-        alert(data.error);
-        return;
+      if (!response.ok || !data.success) {
+        throw new Error(data.error || "Analysis failed");
       }
 
       router.refresh();
     } catch (error) {
       console.error(error);
-      alert("Analysis failed");
+      alert(error.message || "Analysis failed");
     } finally {
       setLoading(false);
     }

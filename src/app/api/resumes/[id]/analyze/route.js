@@ -10,10 +10,13 @@ import Resume from "@/models/Resume";
 export async function POST(request, { params }) {
   try {
     const { id } = await params;
+    console.log("[ATS Analyze] Request received for resume ID:", id);
 
     const session = await auth();
+    console.log("[ATS Analyze] Session user ID:", session?.user?.id);
 
     if (!session) {
+      console.log("[ATS Analyze] Unauthorized request (no session)");
       return NextResponse.json(
         {
           success: false,
@@ -28,8 +31,10 @@ export async function POST(request, { params }) {
     await connectDB();
 
     const resume = await Resume.findById(id);
+    console.log("[ATS Analyze] Resume found in DB:", !!resume);
 
     if (!resume) {
+      console.log("[ATS Analyze] Resume not found in DB for ID:", id);
       return NextResponse.json(
         {
           success: false,
@@ -42,6 +47,7 @@ export async function POST(request, { params }) {
     }
 
     if (resume.userId.toString() !== session.user.id) {
+      console.log("[ATS Analyze] Resume user ID mismatch. Resume belongs to:", resume.userId.toString(), "Request from session user:", session.user.id);
       return NextResponse.json(
         {
           success: false,
@@ -141,6 +147,9 @@ export async function POST(request, { params }) {
     const response = await ai.models.generateContent({
       model: GEMINI_MODEL,
       contents: geminiContents,
+      config: {
+        responseMimeType: "application/json",
+      },
     });
 
     const text = response.text;
