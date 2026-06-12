@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { ai, GEMINI_MODEL } from "@/lib/gemini";
+import { ai, GEMINI_MODEL, parseGeminiJson } from "@/lib/gemini";
 import mammoth from "mammoth";
 
 export async function POST(request) {
@@ -97,13 +97,8 @@ export async function POST(request) {
     });
 
     const text = geminiResponse.text;
-    const cleanText = text
-      .replace(/```json/g, "")
-      .replace(/```/g, "")
-      .trim();
-
-    console.log("Guest analyze route Gemini Response:", cleanText);
-    const parsedAnalysis = JSON.parse(cleanText);
+    console.log("Guest analyze route Gemini Response:", text);
+    const parsedAnalysis = parseGeminiJson(text);
 
     return NextResponse.json({
       success: true,

@@ -1,7 +1,7 @@
 import { auth } from "@/auth";
 import { NextResponse } from "next/server";
 import { connectDB } from "@/lib/db/mongodb";
-import { ai, GEMINI_MODEL } from "@/lib/gemini";
+import { ai, GEMINI_MODEL, parseGeminiJson } from "@/lib/gemini";
 import Resume from "@/models/Resume";
 import mammoth from "mammoth";
 
@@ -110,16 +110,14 @@ export async function POST(request) {
           `,
         },
       ],
+      config: {
+        responseMimeType: "application/json",
+      },
     });
 
     const text = response.text;
-    const cleanText = text
-      .replace(/```json/g, "")
-      .replace(/```/g, "")
-      .trim();
-
-    console.log("Job Match Gemini Response:", cleanText);
-    const parsedMatch = JSON.parse(cleanText);
+    console.log("Job Match Gemini Response:", text);
+    const parsedMatch = parseGeminiJson(text);
 
     return NextResponse.json({
       success: true,

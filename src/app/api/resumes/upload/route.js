@@ -3,7 +3,7 @@ import { NextResponse } from "next/server";
 
 import { connectDB } from "@/lib/db/mongodb";
 import cloudinary from "@/lib/cloudinary";
-import { ai, GEMINI_MODEL } from "@/lib/gemini";
+import { ai, GEMINI_MODEL, parseGeminiJson } from "@/lib/gemini";
 import mammoth from "mammoth";
 
 import Resume from "@/models/Resume";
@@ -112,13 +112,8 @@ export async function POST(request) {
     });
 
     const text = geminiResponse.text;
-    const cleanText = text
-      .replace(/```json/g, "")
-      .replace(/```/g, "")
-      .trim();
-
-    console.log("Upload route Gemini Response:", cleanText);
-    const parsedAnalysis = JSON.parse(cleanText);
+    console.log("Upload route Gemini Response:", text);
+    const parsedAnalysis = parseGeminiJson(text);
     const parsedText = parsedAnalysis.parsedText || "";
 
     // 2. Upload file to Cloudinary only after analysis succeeds

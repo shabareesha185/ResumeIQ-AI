@@ -2,7 +2,7 @@ import { auth } from "@/auth";
 import { NextResponse } from "next/server";
 
 import { connectDB } from "@/lib/db/mongodb";
-import { ai, GEMINI_MODEL } from "@/lib/gemini";
+import { ai, GEMINI_MODEL, parseGeminiJson } from "@/lib/gemini";
 import mammoth from "mammoth";
 
 import Resume from "@/models/Resume";
@@ -153,16 +153,8 @@ export async function POST(request, { params }) {
     });
 
     const text = response.text;
-
-    const cleanText = text
-      .replace(/```json/g, "")
-      .replace(/```/g, "")
-      .trim();
-
-    console.log("Gemini Response:");
-    console.log(cleanText);
-
-    const parsed = JSON.parse(cleanText);
+    console.log("Gemini Response:", text);
+    const parsed = parseGeminiJson(text);
 
     resume.atsScore = parsed.score || 0;
     resume.strengths = parsed.strengths || [];
