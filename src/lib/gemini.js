@@ -12,11 +12,11 @@ const sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
 
 // Fallback chain of capable Gemini models to route requests to when overloaded
 const MODEL_FALLBACK_CHAIN = [
-  "gemini-3.5-flash",
   "gemini-3.1-pro-preview",
   "gemini-3.1-pro",
   "gemini-2.5-pro",
   "gemini-1.5-pro",
+  "gemini-3.5-flash",
   "gemini-1.5-flash",
 ];
 
@@ -86,7 +86,7 @@ const generateContentWithRetry = async (options) => {
               );
               break; // breaks out of the inner while loop to move to the next model
             } else {
-              throw initialError || error;
+              throw error;
             }
           }
         } else if (isModelNotFound) {
@@ -97,7 +97,7 @@ const generateContentWithRetry = async (options) => {
             );
             break;
           } else {
-            throw initialError || error;
+            throw error;
           }
         } else {
           // Critical parameter/key errors should fail fast

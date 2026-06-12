@@ -66,7 +66,11 @@ export async function POST(request) {
       ];
     } else {
       let mammothText = "";
-      if (file.type === "application/vnd.openxmlformats-officedocument.wordprocessingml.document" || file.name.endsWith(".docx")) {
+      if (
+        file.type ===
+          "application/vnd.openxmlformats-officedocument.wordprocessingml.document" ||
+        file.name.endsWith(".docx")
+      ) {
         const result = await mammoth.extractRawText({ buffer: buffer });
         mammothText = result.value;
       }
@@ -112,7 +116,6 @@ export async function POST(request) {
     });
 
     const text = geminiResponse.text;
-    console.log("Upload route Gemini Response:", text);
     const parsedAnalysis = parseGeminiJson(text);
     const parsedText = parsedAnalysis.parsedText || "";
 
@@ -156,7 +159,8 @@ export async function POST(request) {
       errorMessage.toLowerCase().includes("429") ||
       error.status === "RESOURCE_EXHAUSTED"
     ) {
-      errorMessage = "AI rate limit reached. Please wait a few seconds and try again.";
+      errorMessage =
+        "AI rate limit reached. Please wait a few seconds and try again.";
     }
 
     return NextResponse.json(
