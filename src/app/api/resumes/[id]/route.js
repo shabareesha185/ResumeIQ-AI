@@ -28,7 +28,11 @@ export async function DELETE(request, { params }) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
-    const resourceType = resume.resourceType || (resume.fileType && resume.fileType.includes("pdf") ? "image" : "raw");
+    let resourceType = resume.resourceType;
+    if (!resourceType || resourceType === "auto") {
+      const isPdf = (resume.fileType && resume.fileType.includes("pdf")) || (resume.fileName && resume.fileName.toLowerCase().endsWith(".pdf"));
+      resourceType = isPdf ? "image" : "raw";
+    }
 
     await cloudinary.uploader.destroy(resume.publicId, {
       resource_type: resourceType,
