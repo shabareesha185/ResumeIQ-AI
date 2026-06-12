@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import Link from "next/link";
+import { useToast } from "@/context/ToastContext";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -11,6 +12,7 @@ export default function CoverLetterHistory({ initialLetters }) {
   const [letters, setLetters] = useState(initialLetters);
   const [search, setSearch] = useState("");
   const [deletingId, setDeletingId] = useState(null);
+  const { toast } = useToast();
 
   const handleDelete = async (id) => {
     if (!confirm("Are you sure you want to delete this cover letter?")) return;
@@ -26,9 +28,10 @@ export default function CoverLetterHistory({ initialLetters }) {
         throw new Error(data.error || "Failed to delete cover letter");
       }
 
+      toast("Cover letter deleted successfully!", "success");
       setLetters(letters.filter((letter) => letter._id !== id));
     } catch (err) {
-      alert(err.message);
+      toast(err.message || "Failed to delete cover letter", "error");
     } finally {
       setDeletingId(null);
     }

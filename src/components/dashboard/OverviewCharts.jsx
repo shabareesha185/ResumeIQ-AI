@@ -269,7 +269,7 @@ export default function OverviewCharts({ resumes = [] }) {
         </CardHeader>
         <CardContent className="flex-1 flex flex-col items-center justify-center relative pb-6">
           <div className="relative h-44 w-44">
-            <ResponsiveContainer width="100%" height="100%">
+            <ResponsiveContainer width="100%" height="100%" minWidth={0} minHeight={0}>
               <RadialBarChart
                 cx="50%"
                 cy="50%"
@@ -310,8 +310,8 @@ export default function OverviewCharts({ resumes = [] }) {
             ATS Score improvement over time.
           </CardDescription>
         </CardHeader>
-        <CardContent className="h-44 pb-6">
-          <ResponsiveContainer width="100%" height="100%">
+        <CardContent className="h-44 pb-6 relative">
+          <ResponsiveContainer width="100%" height="100%" minWidth={0} minHeight={0}>
             <AreaChart
               data={scanData}
               margin={{ top: 5, right: 5, left: -20, bottom: 0 }}

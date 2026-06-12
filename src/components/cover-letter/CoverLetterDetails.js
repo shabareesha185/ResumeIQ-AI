@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import { useToast } from "@/context/ToastContext";
 import Link from "next/link";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -11,10 +12,12 @@ export default function CoverLetterDetails({ coverLetter }) {
   const router = useRouter();
   const [copied, setCopied] = useState(false);
   const [deleting, setDeleting] = useState(false);
+  const { toast } = useToast();
 
   const handleCopy = () => {
     navigator.clipboard.writeText(coverLetter.content);
     setCopied(true);
+    toast("Cover letter copied to clipboard!", "success");
     setTimeout(() => setCopied(false), 2000);
   };
 
@@ -36,10 +39,11 @@ export default function CoverLetterDetails({ coverLetter }) {
         throw new Error(data.error || "Failed to delete cover letter");
       }
 
+      toast("Cover letter deleted permanently!", "success");
       router.push("/cover-letter/history");
       router.refresh();
     } catch (err) {
-      alert(err.message);
+      toast(err.message || "Failed to delete cover letter", "error");
       setDeleting(false);
     }
   };

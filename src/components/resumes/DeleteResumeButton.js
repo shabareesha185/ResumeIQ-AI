@@ -2,12 +2,14 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import { useToast } from "@/context/ToastContext";
 import { Button } from "@/components/ui/button";
 import { Trash2, Loader2 } from "lucide-react";
 
 export default function DeleteResumeButton({ resumeId }) {
   const router = useRouter();
   const [loading, setLoading] = useState(false);
+  const { toast } = useToast();
 
   const handleDelete = async () => {
     const confirmed = confirm("Are you sure you want to delete this resume? This action cannot be undone.");
@@ -23,13 +25,14 @@ export default function DeleteResumeButton({ resumeId }) {
       const data = await response.json();
 
       if (data.success) {
+        toast("Resume deleted successfully!", "success");
         router.refresh();
       } else {
-        alert(data.error || "Failed to delete resume");
+        toast(data.error || "Failed to delete resume", "error");
       }
     } catch (err) {
       console.error(err);
-      alert("An error occurred while deleting the resume");
+      toast("An error occurred while deleting the resume", "error");
     } finally {
       setLoading(false);
     }

@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import { useToast } from "@/context/ToastContext";
 
 import { Button } from "@/components/ui/button";
 import { Sparkles } from "lucide-react";
@@ -10,6 +11,7 @@ export default function AnalyzeResumeButton({ resumeId }) {
   const [loading, setLoading] = useState(false);
 
   const router = useRouter();
+  const { toast } = useToast();
 
   async function handleAnalyze() {
     try {
@@ -32,10 +34,11 @@ export default function AnalyzeResumeButton({ resumeId }) {
         throw new Error(data.error || "Analysis failed");
       }
 
+      toast("ATS Analysis completed successfully!", "success");
       router.refresh();
     } catch (error) {
       console.error(error);
-      alert(error.message || "Analysis failed");
+      toast(error.message || "Analysis failed", "error");
     } finally {
       setLoading(false);
     }

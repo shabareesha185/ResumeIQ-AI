@@ -1,5 +1,6 @@
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
+import { ToastProvider } from "@/context/ToastContext";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -30,9 +31,9 @@ export default function RootLayout({ children }) {
                 try {
                   var theme = localStorage.getItem('theme') || 'dark';
                   if (theme === 'dark') {
-                    document.documentElement.classList.add('dark');
+                     document.documentElement.classList.add('dark');
                   } else {
-                    document.documentElement.classList.remove('dark');
+                     document.documentElement.classList.remove('dark');
                   }
                 } catch (e) {}
               })();
@@ -41,7 +42,9 @@ export default function RootLayout({ children }) {
         />
       </head>
       <body className="min-h-full flex flex-col bg-background text-foreground transition-colors duration-300">
-        {children}
+        <ToastProvider>
+          {children}
+        </ToastProvider>
       </body>
     </html>
   );
