@@ -40,7 +40,7 @@ export default function HowItWorks() {
         {steps.map((step, index) => {
           const Icon = step.icon;
           return (
-            <div key={step.number} className="relative flex flex-col p-6 rounded-2xl border border-border bg-card hover:border-zinc-350 dark:hover:border-zinc-800 transition duration-300 hover:shadow-md">
+            <div key={step.number} className="relative flex flex-col p-6 rounded-2xl border border-border bg-card hover:border-zinc-800 dark:hover:border-zinc-800 transition duration-300 hover:shadow-md">
               {/* Step indicator */}
               <div className="absolute top-4 right-6 text-5xl md:text-6xl font-extrabold text-foreground/10 select-none">
                 {step.number}

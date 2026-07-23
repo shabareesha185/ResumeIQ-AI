@@ -50,7 +50,7 @@ export default function Features() {
           return (
             <Card 
               key={feature.title} 
-              className="group relative overflow-hidden border-border bg-card backdrop-blur-sm transition-all duration-300 hover:border-zinc-350 dark:hover:border-zinc-800 hover:bg-card/85 hover:-translate-y-1 rounded-2xl hover:shadow-lg"
+              className="group relative overflow-hidden border-border bg-card backdrop-blur-sm transition-all duration-300 hover:border-zinc-800 dark:hover:border-zinc-800 hover:bg-card/85 hover:-translate-y-1 rounded-2xl hover:shadow-lg"
             >
               <CardContent className="p-8 flex flex-col items-start space-y-4">
                 {/* Glow behind icon */}

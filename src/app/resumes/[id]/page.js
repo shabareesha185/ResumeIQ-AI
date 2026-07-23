@@ -214,7 +214,7 @@ export default async function ResumeDetailsPage({ params }) {
               {score < 80 ? (
                 <AlertTriangle className="h-5 w-5 text-amber-400 shrink-0 mt-0.5" />
               ) : (
-                <ShieldCheck className="h-5 w-5 text-emerald-450 shrink-0 mt-0.5" />
+                <ShieldCheck className="h-5 w-5 text-emerald-400 shrink-0 mt-0.5" />
               )}
               <div className="space-y-1">
                 <h5 className="text-xs font-bold text-foreground uppercase tracking-wide">

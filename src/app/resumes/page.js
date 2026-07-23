@@ -55,7 +55,7 @@ export default async function ResumesPage() {
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
-          <h1 className="text-4xl font-extrabold tracking-tight bg-gradient-to-r from-foreground via-foreground/90 to-zinc-450 bg-clip-text text-transparent">
+          <h1 className="text-4xl font-extrabold tracking-tight bg-gradient-to-r from-foreground via-foreground/90 to-zinc-400 bg-clip-text text-transparent">
             My Resumes
           </h1>
           <p className="mt-2 text-zinc-400">

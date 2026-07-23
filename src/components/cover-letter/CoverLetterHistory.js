@@ -97,7 +97,7 @@ export default function CoverLetterHistory({ initialLetters }) {
                       {letter.company}
                     </CardDescription>
                   </div>
-                  <div className="p-2 rounded-lg bg-zinc-900/60 text-indigo-400 border border-zinc-850 shrink-0">
+                  <div className="p-2 rounded-lg bg-zinc-900/60 text-indigo-400 border border-zinc-800 shrink-0">
                     <FileSignature className="h-4 w-4" />
                   </div>
                 </div>

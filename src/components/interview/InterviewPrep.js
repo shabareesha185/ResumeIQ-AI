@@ -160,7 +160,7 @@ export default function InterviewPrep({ initialResumes = [] }) {
         <div className="absolute top-[-10%] right-[-10%] h-96 w-96 rounded-full bg-indigo-500/5 blur-3xl pointer-events-none" />
         
         <div>
-          <h1 className="text-4xl font-extrabold tracking-tight bg-gradient-to-r from-foreground via-foreground/90 to-zinc-450 bg-clip-text text-transparent">
+          <h1 className="text-4xl font-extrabold tracking-tight bg-gradient-to-r from-foreground via-foreground/90 to-zinc-400 bg-clip-text text-transparent">
             Mock Interview Prep
           </h1>
           <p className="text-muted-foreground mt-2">
@@ -199,7 +199,7 @@ export default function InterviewPrep({ initialResumes = [] }) {
         /* SETUP WORKSPACE */
         <div className="space-y-8 max-w-4xl mx-auto">
           <div>
-            <h1 className="text-4xl font-extrabold tracking-tight bg-gradient-to-r from-foreground via-foreground/90 to-zinc-450 bg-clip-text text-transparent leading-tight">
+            <h1 className="text-4xl font-extrabold tracking-tight bg-gradient-to-r from-foreground via-foreground/90 to-zinc-400 bg-clip-text text-transparent leading-tight">
               Mock Interview Practice
             </h1>
             <p className="text-muted-foreground mt-2">
@@ -268,7 +268,7 @@ export default function InterviewPrep({ initialResumes = [] }) {
                         onClick={() => setFocusArea(area.name)}
                         className={`text-left p-4 rounded-xl border transition duration-200 cursor-pointer active:scale-[0.99] ${
                           focusArea === area.name
-                            ? "bg-zinc-900 border-zinc-350 shadow-md text-zinc-50 dark:bg-zinc-100/10 dark:border-zinc-500"
+                            ? "bg-zinc-900 border-zinc-800 shadow-md text-zinc-50 dark:bg-zinc-100/10 dark:border-zinc-500"
                             : "bg-zinc-950/20 border-border text-zinc-400 hover:border-zinc-800 hover:bg-zinc-950/40"
                         }`}
                         disabled={generating}
@@ -357,7 +357,7 @@ export default function InterviewPrep({ initialResumes = [] }) {
                           onClick={() => setActiveQuestionIndex(index)}
                           className={`w-full text-left p-3.5 rounded-xl border transition-all duration-200 cursor-pointer flex items-start gap-3 relative ${
                             isActive
-                              ? "bg-zinc-900 border-zinc-350 text-zinc-50 dark:bg-zinc-100/10 dark:border-zinc-500 font-semibold"
+                              ? "bg-zinc-900 border-zinc-800 text-zinc-50 dark:bg-zinc-100/10 dark:border-zinc-500 font-semibold"
                               : "bg-transparent border-transparent text-muted-foreground hover:bg-zinc-500/5 hover:text-foreground"
                           }`}
                         >
@@ -552,7 +552,7 @@ export default function InterviewPrep({ initialResumes = [] }) {
                           ? "text-emerald-400 bg-emerald-500/10 border-emerald-500/20"
                           : evaluations[activeQuestionIndex].score >= 60
                           ? "text-amber-400 bg-amber-500/10 border-amber-500/20"
-                          : "text-rose-450 bg-rose-500/10 border-rose-500/20"
+                          : "text-rose-400 bg-rose-500/10 border-rose-500/20"
                       }`}>
                         <span>{evaluations[activeQuestionIndex].score}%</span>
                         <span className="text-[8px] uppercase tracking-wider mt-0.5 font-bold">Grade</span>

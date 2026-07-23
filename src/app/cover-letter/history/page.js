@@ -32,7 +32,7 @@ export default async function CoverLetterHistoryPage() {
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
-          <h1 className="text-4xl font-extrabold tracking-tight bg-gradient-to-r from-foreground via-foreground/90 to-zinc-450 bg-clip-text text-transparent leading-tight flex items-center gap-2.5">
+          <h1 className="text-4xl font-extrabold tracking-tight bg-gradient-to-r from-foreground via-foreground/90 to-zinc-400 bg-clip-text text-transparent leading-tight flex items-center gap-2.5">
             <History className="h-9 w-9 text-indigo-400" />
             Cover Letter History
           </h1>

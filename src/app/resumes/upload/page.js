@@ -162,7 +162,7 @@ export default function UploadResumePage() {
 
       {/* Header */}
       <div>
-        <h1 className="text-4xl font-extrabold tracking-tight bg-gradient-to-r from-foreground via-foreground/90 to-zinc-450 bg-clip-text text-transparent">
+        <h1 className="text-4xl font-extrabold tracking-tight bg-gradient-to-r from-foreground via-foreground/90 to-zinc-400 bg-clip-text text-transparent">
           Upload Resume
         </h1>
         <p className="mt-2 text-zinc-400">
@@ -179,7 +179,7 @@ export default function UploadResumePage() {
                 ? "bg-emerald-500/10 text-emerald-400 border-emerald-500/20" 
                 : status.type === "error" 
                 ? "bg-rose-500/10 text-rose-400 border-rose-500/20" 
-                : "bg-indigo-500/10 text-indigo-450 border-indigo-500/20"
+                : "bg-indigo-500/10 text-indigo-400 border-indigo-500/20"
             }`}>
               {status.type === "success" ? (
                 <CheckCircle2 className="h-5 w-5 shrink-0 mt-0.5" />
@@ -239,7 +239,7 @@ export default function UploadResumePage() {
               </div>
             ) : (
               /* Selected File Details */
-              <div className="w-full flex items-center justify-between p-4 rounded-xl border border-zinc-850 bg-zinc-900/40 backdrop-blur-sm max-w-lg mx-auto">
+              <div className="w-full flex items-center justify-between p-4 rounded-xl border border-zinc-800 bg-zinc-900/40 backdrop-blur-sm max-w-lg mx-auto">
                 <div className="flex items-center gap-3 text-left">
                   <div className="p-3 rounded-lg bg-indigo-500/10 text-indigo-400 border border-indigo-500/25">
                     <FileText className="h-6 w-6" />

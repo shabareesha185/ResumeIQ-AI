@@ -12,12 +12,10 @@ const sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
 
 // Fallback chain of capable Gemini models to route requests to when overloaded
 const MODEL_FALLBACK_CHAIN = [
+  "gemini-3.5-flash",
   "gemini-3.1-pro-preview",
   "gemini-3.1-pro",
-  "gemini-2.5-pro",
-  "gemini-1.5-pro",
-  "gemini-3.5-flash",
-  "gemini-1.5-flash",
+  "gemini-2.5-flash",
 ];
 
 const generateContentWithRetry = async (options) => {
@@ -52,12 +50,15 @@ const generateContentWithRetry = async (options) => {
           initialError = error;
         }
 
-        const status = error.status || error.statusCode;
+        const status = error.status; // string, e.g. "NOT_FOUND", "RESOURCE_EXHAUSTED"
+        const code = error.code || error.statusCode; // number, e.g. 404, 429
 
         const isQuotaOrUnavailable =
-          status === 429 ||
-          status === 503 ||
-          status === 504 ||
+          code === 429 ||
+          code === 503 ||
+          code === 504 ||
+          status === "RESOURCE_EXHAUSTED" ||
+          status === "UNAVAILABLE" ||
           error.message?.toLowerCase().includes("quota") ||
           error.message?.toLowerCase().includes("rate limit") ||
           error.message?.toLowerCase().includes("demand") ||
@@ -66,8 +67,10 @@ const generateContentWithRetry = async (options) => {
           error.message?.toLowerCase().includes("429");
 
         const isModelNotFound =
-          status === 404 ||
-          status === 400 ||
+          code === 404 ||
+          code === 400 ||
+          status === "NOT_FOUND" ||
+          status === "INVALID_ARGUMENT" ||
           error.message?.toLowerCase().includes("not found") ||
           error.message?.toLowerCase().includes("invalid model") ||
           error.message?.toLowerCase().includes("unsupported model");

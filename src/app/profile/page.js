@@ -96,7 +96,7 @@ export default async function ProfilePage() {
         <CardContent className="pt-6">
           <div className="grid gap-6 md:grid-cols-2">
             <div className="flex gap-3 items-start p-3 bg-zinc-950/20 border border-zinc-900/60 rounded-xl">
-              <div className="p-2 rounded-lg bg-zinc-900 text-zinc-400 border border-zinc-850">
+              <div className="p-2 rounded-lg bg-zinc-900 text-zinc-400 border border-zinc-800">
                 <User className="h-4 w-4" />
               </div>
               <div>
@@ -110,7 +110,7 @@ export default async function ProfilePage() {
             </div>
 
             <div className="flex gap-3 items-start p-3 bg-zinc-950/20 border border-zinc-900/60 rounded-xl">
-              <div className="p-2 rounded-lg bg-zinc-900 text-zinc-400 border border-zinc-850">
+              <div className="p-2 rounded-lg bg-zinc-900 text-zinc-400 border border-zinc-800">
                 <Mail className="h-4 w-4" />
               </div>
               <div>
@@ -124,7 +124,7 @@ export default async function ProfilePage() {
             </div>
 
             <div className="flex gap-3 items-start p-3 bg-zinc-950/20 border border-zinc-900/60 rounded-xl">
-              <div className="p-2 rounded-lg bg-zinc-900 text-zinc-400 border border-zinc-850">
+              <div className="p-2 rounded-lg bg-zinc-900 text-zinc-400 border border-zinc-800">
                 <ShieldCheck className="h-4 w-4 text-emerald-400" />
               </div>
               <div>
@@ -141,7 +141,7 @@ export default async function ProfilePage() {
             </div>
 
             <div className="flex gap-3 items-start p-3 bg-zinc-950/20 border border-zinc-900/60 rounded-xl">
-              <div className="p-2 rounded-lg bg-zinc-900 text-zinc-400 border border-zinc-850">
+              <div className="p-2 rounded-lg bg-zinc-900 text-zinc-400 border border-zinc-800">
                 <Calendar className="h-4 w-4" />
               </div>
               <div>

@@ -211,16 +211,23 @@ export default function OverviewCharts({ resumes = [] }) {
                 </div>
 
                 {error && (
-                  <div className="flex items-center gap-2 text-xs text-rose-450 bg-rose-500/10 border border-rose-500/20 p-2.5 rounded-lg">
-                    <AlertCircle className="h-4.5 w-4.5 shrink-0" />
-                    <span className="truncate">{error}</span>
+                  <div className="flex items-start gap-2 text-xs text-rose-400 bg-rose-500/10 border border-rose-500/20 p-2.5 rounded-lg">
+                    <AlertCircle className="h-4 w-4 shrink-0 mt-0.5" />
+                    <span className="break-words w-full">{error}</span>
+                  </div>
+                )}
+
+                {uploading && statusText && (
+                  <div className="flex items-start gap-2 text-xs text-indigo-400 bg-indigo-500/10 border border-indigo-500/20 p-2.5 rounded-lg animate-pulse">
+                    <Loader2 className="h-4 w-4 animate-spin shrink-0 mt-0.5" />
+                    <span className="break-words w-full">{statusText}</span>
                   </div>
                 )}
 
                 {success && (
-                  <div className="flex items-center gap-2 text-xs text-emerald-400 bg-emerald-500/10 border border-emerald-500/20 p-2.5 rounded-lg">
-                    <CheckCircle2 className="h-4 w-4 shrink-0" />
-                    <span>{statusText || "Analysis completed successfully!"}</span>
+                  <div className="flex items-start gap-2 text-xs text-emerald-400 bg-emerald-500/10 border border-emerald-500/20 p-2.5 rounded-lg">
+                    <CheckCircle2 className="h-4 w-4 shrink-0 mt-0.5" />
+                    <span className="break-words w-full">{statusText || "Analysis completed successfully!"}</span>
                   </div>
                 )}
 
@@ -228,12 +235,12 @@ export default function OverviewCharts({ resumes = [] }) {
                   <Button
                     onClick={handleUploadSubmit}
                     disabled={uploading}
-                    className="w-full bg-white hover:bg-zinc-200 text-black font-semibold h-10 rounded-lg transition active:scale-98"
+                    className="w-full bg-white hover:bg-zinc-200 text-black font-semibold h-10 rounded-lg transition active:scale-98 cursor-pointer"
                   >
                     {uploading ? (
                       <>
                         <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                        {statusText || "Analyzing..."}
+                        Analyzing...
                       </>
                     ) : (
                       <>

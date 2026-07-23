@@ -148,7 +148,7 @@ export default function EditProfileForm({ initialUser }) {
                       Upload a square JPG, PNG, or GIF file (max 5MB).
                     </p>
                     <div className="flex flex-wrap items-center gap-2 justify-center sm:justify-start">
-                      <label className="cursor-pointer inline-flex items-center justify-center rounded-lg bg-zinc-900 hover:bg-zinc-850 border border-zinc-800 text-zinc-300 hover:text-zinc-50 h-9 px-4 text-xs font-semibold transition active:scale-98 gap-1.5 disabled:opacity-50">
+                      <label className="cursor-pointer inline-flex items-center justify-center rounded-lg bg-zinc-900 hover:bg-zinc-800 border border-zinc-800 text-zinc-300 hover:text-zinc-50 h-9 px-4 text-xs font-semibold transition active:scale-98 gap-1.5 disabled:opacity-50">
                         {uploadingPhoto ? (
                           <>
                             <Loader2 className="h-3.5 w-3.5 animate-spin" />

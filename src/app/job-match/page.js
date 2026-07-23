@@ -100,16 +100,16 @@ export default function JobMatchPage() {
 
   let scoreColorClass = "text-rose-500";
   let scoreStatus = "Low Match Rating";
-  let scoreTextClass = "text-rose-450";
+  let scoreTextClass = "text-rose-400";
 
   if (score >= 80) {
     scoreColorClass = "text-emerald-500";
     scoreStatus = "Excellent Alignment";
-    scoreTextClass = "text-emerald-450";
+    scoreTextClass = "text-emerald-400";
   } else if (score >= 60) {
     scoreColorClass = "text-amber-500";
     scoreStatus = "Moderate Alignment";
-    scoreTextClass = "text-amber-450";
+    scoreTextClass = "text-amber-400";
   }
 
   if (fetchingResumes) {
@@ -129,7 +129,7 @@ export default function JobMatchPage() {
 
       {/* Header */}
       <div>
-        <h1 className="text-4xl font-extrabold tracking-tight bg-gradient-to-r from-foreground via-foreground/90 to-zinc-450 bg-clip-text text-transparent leading-tight">
+        <h1 className="text-4xl font-extrabold tracking-tight bg-gradient-to-r from-foreground via-foreground/90 to-zinc-400 bg-clip-text text-transparent leading-tight">
           AI Job Match Analysis
         </h1>
         <p className="text-muted-foreground mt-2">
@@ -206,9 +206,9 @@ export default function JobMatchPage() {
                   </div>
 
                   {error && (
-                    <div className="flex items-center gap-2 text-xs text-rose-500 bg-rose-500/10 border border-rose-500/20 p-3 rounded-xl">
-                      <AlertTriangle className="h-4.5 w-4.5 shrink-0" />
-                      <span>{error}</span>
+                    <div className="flex items-start gap-2 text-xs text-rose-400 bg-rose-500/10 border border-rose-500/20 p-3 rounded-xl">
+                      <AlertTriangle className="h-4.5 w-4.5 shrink-0 mt-0.5" />
+                      <span className="break-words w-full">{error}</span>
                     </div>
                   )}
 

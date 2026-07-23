@@ -72,7 +72,7 @@ export default function SettingsPage() {
 
       {/* Header */}
       <div>
-        <h1 className="text-4xl font-extrabold tracking-tight bg-gradient-to-r from-foreground via-foreground/90 to-zinc-450 bg-clip-text text-transparent leading-tight">
+        <h1 className="text-4xl font-extrabold tracking-tight bg-gradient-to-r from-foreground via-foreground/90 to-zinc-400 bg-clip-text text-transparent leading-tight">
           Settings
         </h1>
         <p className="mt-2 text-muted-foreground">Manage your ResumeIQ preferences.</p>

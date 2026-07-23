@@ -49,7 +49,7 @@ export function ToastProvider({ children }) {
           } else if (t.type === "error") {
             typeClasses = "bg-rose-950/80 border-rose-800/40 text-rose-100 dark:bg-rose-950/90";
             Icon = AlertTriangle;
-            iconColor = "text-rose-450";
+            iconColor = "text-rose-400";
           }
 
           return (

@@ -64,7 +64,7 @@ export default function Sidebar() {
     <aside className="hidden md:flex w-72 min-h-screen border-r border-border bg-sidebar text-sidebar-foreground flex-col transition-colors duration-300">
       {/* Logo */}
       <div className="p-6 border-b border-border">
-        <h1 className="text-2xl font-bold bg-gradient-to-r from-foreground via-foreground/90 to-zinc-450 bg-clip-text text-transparent">ResumeIQ</h1>
+        <h1 className="text-2xl font-bold bg-gradient-to-r from-foreground via-foreground/90 to-zinc-400 bg-clip-text text-transparent">ResumeIQ</h1>
 
         <p className="mt-1 text-sm text-muted-foreground">AI Career Assistant</p>
         <div className="mt-4 rounded-xl border border-border bg-card/60 p-4">

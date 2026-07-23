@@ -48,7 +48,7 @@ export default async function ATSAnalysisPage() {
         <div className="absolute top-0 right-10 h-72 w-72 rounded-full bg-indigo-500/5 blur-3xl pointer-events-none" />
         
         <div>
-          <h1 className="text-4xl font-extrabold tracking-tight bg-gradient-to-r from-foreground via-foreground/90 to-zinc-450 bg-clip-text text-transparent">
+          <h1 className="text-4xl font-extrabold tracking-tight bg-gradient-to-r from-foreground via-foreground/90 to-zinc-400 bg-clip-text text-transparent">
             ATS Analysis
           </h1>
           <p className="text-muted-foreground mt-2">
@@ -84,7 +84,7 @@ export default async function ATSAnalysisPage() {
         <div className="absolute top-0 right-10 h-72 w-72 rounded-full bg-amber-500/5 blur-3xl pointer-events-none" />
 
         <div>
-          <h1 className="text-4xl font-extrabold tracking-tight bg-gradient-to-r from-foreground via-foreground/90 to-zinc-450 bg-clip-text text-transparent">
+          <h1 className="text-4xl font-extrabold tracking-tight bg-gradient-to-r from-foreground via-foreground/90 to-zinc-400 bg-clip-text text-transparent">
             ATS Analysis
           </h1>
           <p className="text-muted-foreground mt-2">
@@ -144,7 +144,7 @@ export default async function ATSAnalysisPage() {
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
-          <h1 className="text-4xl font-extrabold tracking-tight bg-gradient-to-r from-foreground via-foreground/90 to-zinc-450 bg-clip-text text-transparent">
+          <h1 className="text-4xl font-extrabold tracking-tight bg-gradient-to-r from-foreground via-foreground/90 to-zinc-400 bg-clip-text text-transparent">
             ATS Analysis Report
           </h1>
           <p className="text-muted-foreground mt-2">

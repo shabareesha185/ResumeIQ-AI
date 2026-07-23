@@ -7,7 +7,7 @@ export default function Navbar() {
     <header className="sticky top-0 z-50 border-b border-border bg-background/50 backdrop-blur-md transition-colors duration-300">
       <div className="mx-auto flex h-16 max-w-6xl items-center justify-between px-6">
         <Link href="/" className="flex items-center gap-2 text-xl font-bold tracking-tight text-foreground hover:opacity-90 transition">
-          <span className="h-2 w-2 rounded-full bg-blue-550 shadow-[0_0_8px_#3b82f6]" />
+          <span className="h-2 w-2 rounded-full bg-blue-500 shadow-[0_0_8px_#3b82f6]" />
           ResumeIQ
         </Link>
 

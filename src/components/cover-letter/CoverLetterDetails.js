@@ -100,7 +100,7 @@ export default function CoverLetterDetails({ coverLetter }) {
             onClick={handleDelete}
             disabled={deleting}
             variant="destructive"
-            className="border border-rose-500/20 bg-rose-500/5 hover:bg-rose-650 text-rose-500 hover:text-white h-10 px-4 rounded-lg transition gap-2"
+            className="border border-rose-500/20 bg-rose-500/5 hover:bg-rose-600 text-rose-500 hover:text-white h-10 px-4 rounded-lg transition gap-2"
           >
             {deleting ? (
               <>
@@ -119,20 +119,20 @@ export default function CoverLetterDetails({ coverLetter }) {
 
       {/* Meta Card */}
       <Card className="border-zinc-900 bg-zinc-950/20 backdrop-blur-sm rounded-xl p-5 no-print">
-        <div className="flex flex-wrap items-center gap-6 text-sm text-zinc-450">
+        <div className="flex flex-wrap items-center gap-6 text-sm text-zinc-400">
           <div className="flex items-center gap-2">
             <Building className="h-4 w-4 text-zinc-500" />
-            <span className="font-semibold text-zinc-350">Company:</span>
+            <span className="font-semibold text-zinc-300">Company:</span>
             <span className="text-foreground">{coverLetter.company}</span>
           </div>
           <div className="flex items-center gap-2">
             <Briefcase className="h-4 w-4 text-zinc-500" />
-            <span className="font-semibold text-zinc-350">Role:</span>
+            <span className="font-semibold text-zinc-300">Role:</span>
             <span className="text-foreground">{coverLetter.jobTitle}</span>
           </div>
           <div className="flex items-center gap-2">
             <Calendar className="h-4 w-4 text-zinc-500" />
-            <span className="font-semibold text-zinc-350">Created on:</span>
+            <span className="font-semibold text-zinc-300">Created on:</span>
             <span className="text-foreground">
               {new Date(coverLetter.createdAt).toLocaleDateString("en-US", {
                 month: "long",
