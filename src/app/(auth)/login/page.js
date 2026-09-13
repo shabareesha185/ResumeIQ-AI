@@ -6,7 +6,7 @@ import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Mail, Lock, Loader2, RefreshCw, AlertCircle } from "lucide-react";
+import { Mail, Lock, Loader2, RefreshCw, AlertCircle, ExternalLink, Terminal } from "lucide-react";
 
 export default function LoginPage() {
   const [email, setEmail] = useState("");
@@ -15,6 +15,7 @@ export default function LoginPage() {
   const [googleLoading, setGoogleLoading] = useState(false);
   const [error, setError] = useState("");
   const [unverifiedEmail, setUnverifiedEmail] = useState("");
+  const [devLink, setDevLink] = useState(null);
   const [isResending, setIsResending] = useState(false);
   const [resendStatus, setResendStatus] = useState(null);
 
@@ -23,6 +24,7 @@ export default function LoginPage() {
     setLoading(true);
     setError("");
     setUnverifiedEmail("");
+    setDevLink(null);
     setResendStatus(null);
 
     try {
@@ -81,9 +83,12 @@ export default function LoginPage() {
       const data = await res.json();
 
       if (res.ok && data.success) {
+        if (data.devLink) {
+          setDevLink(data.devLink);
+        }
         setResendStatus({
           type: "success",
-          msg: data.message || "Verification email sent successfully!",
+          msg: data.message || "Verification link generated!",
         });
       } else {
         setResendStatus({
@@ -232,7 +237,7 @@ export default function LoginPage() {
                 </div>
 
                 {unverifiedEmail && (
-                  <div className="pt-1">
+                  <div className="pt-1 space-y-2">
                     <Button
                       type="button"
                       onClick={handleResend}
@@ -247,6 +252,22 @@ export default function LoginPage() {
                       )}
                       <span>Resend Verification Email</span>
                     </Button>
+
+                    {devLink && (
+                      <div className="p-2.5 bg-amber-950/40 border border-amber-800/50 rounded-lg text-left space-y-1.5">
+                        <div className="flex items-center gap-1 text-[11px] text-amber-300 font-medium">
+                          <Terminal className="w-3.5 h-3.5 text-amber-400 shrink-0" />
+                          <span>Dev Mode (SMTP Unconfigured)</span>
+                        </div>
+                        <a
+                          href={devLink}
+                          className="w-full inline-flex items-center justify-center gap-1.5 py-1.5 px-2 rounded bg-amber-500/20 hover:bg-amber-500/30 border border-amber-500/40 text-amber-200 text-[11px] font-medium transition"
+                        >
+                          <span>Verify Email Instantly</span>
+                          <ExternalLink className="w-3 h-3" />
+                        </a>
+                      </div>
+                    )}
 
                     {resendStatus && (
                       <p

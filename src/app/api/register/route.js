@@ -73,6 +73,7 @@ export async function POST(req) {
       requiresVerification: true,
       message: "Registration successful. Please verify your email.",
       emailDelivery: mailResult,
+      devLink: mailResult.mode === "console" ? mailResult.link : null,
       user: {
         id: user._id,
         name: user.name,

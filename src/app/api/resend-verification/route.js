@@ -67,8 +67,9 @@ export async function POST(req) {
 
     return NextResponse.json({
       success: true,
-      message: "A new verification link has been sent to your email.",
+      message: "A new verification link has been generated.",
       emailDelivery: mailResult,
+      devLink: mailResult.mode === "console" ? mailResult.link : null,
     });
   } catch (error) {
     console.error("Resend verification error:", error);

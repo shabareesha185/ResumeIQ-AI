@@ -6,7 +6,7 @@ import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { User, Mail, Lock, Loader2, CheckCircle2, ArrowRight, RefreshCw } from "lucide-react";
+import { User, Mail, Lock, Loader2, CheckCircle2, ArrowRight, RefreshCw, ExternalLink, Terminal } from "lucide-react";
 
 export default function RegisterPage() {
   const router = useRouter();
@@ -18,6 +18,7 @@ export default function RegisterPage() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const [registered, setRegistered] = useState(false);
+  const [devLink, setDevLink] = useState(null);
   const [isResending, setIsResending] = useState(false);
   const [resendStatus, setResendStatus] = useState(null);
 
@@ -48,6 +49,9 @@ export default function RegisterPage() {
       }
 
       setRegistered(true);
+      if (data.devLink) {
+        setDevLink(data.devLink);
+      }
     } catch (error) {
       console.error(error);
       setError("Something went wrong. Please try again.");
@@ -70,9 +74,12 @@ export default function RegisterPage() {
       const data = await res.json();
 
       if (res.ok && data.success) {
+        if (data.devLink) {
+          setDevLink(data.devLink);
+        }
         setResendStatus({
           type: "success",
-          msg: data.message || "A new verification email has been sent!",
+          msg: data.message || "A new verification link has been generated!",
         });
       } else {
         setResendStatus({
@@ -216,20 +223,39 @@ export default function RegisterPage() {
             <div>
               <h2 className="text-2xl font-bold text-zinc-100">Check Your Email</h2>
               <p className="text-sm text-zinc-400 mt-2">
-                We've sent a verification link to <strong className="text-zinc-200">{email}</strong>.
+                Verification link generated for <strong className="text-zinc-200">{email}</strong>.
               </p>
             </div>
 
             <div className="bg-zinc-900/60 border border-zinc-800/80 p-4 rounded-xl text-left text-xs text-zinc-300 space-y-2">
               <div className="flex items-start gap-2">
                 <CheckCircle2 className="w-4 h-4 text-emerald-400 shrink-0 mt-0.5" />
-                <span>Click the link in the email to activate your account.</span>
+                <span>Click the verification link to activate your account.</span>
               </div>
               <div className="flex items-start gap-2">
                 <CheckCircle2 className="w-4 h-4 text-emerald-400 shrink-0 mt-0.5" />
                 <span>The link will expire in 24 hours.</span>
               </div>
             </div>
+
+            {devLink && (
+              <div className="p-3 bg-amber-950/40 border border-amber-800/50 rounded-xl text-left space-y-2">
+                <div className="flex items-center gap-1.5 text-xs text-amber-300 font-semibold">
+                  <Terminal className="w-4 h-4 text-amber-400" />
+                  <span>Dev Testing Mode (SMTP Unconfigured)</span>
+                </div>
+                <p className="text-[11px] text-amber-200/80">
+                  SMTP credentials are not configured in environment settings. Click below to verify instantly for testing:
+                </p>
+                <a
+                  href={devLink}
+                  className="w-full inline-flex items-center justify-center gap-2 py-2 px-3 rounded-lg bg-amber-500/20 hover:bg-amber-500/30 border border-amber-500/40 text-amber-200 text-xs font-medium transition"
+                >
+                  <span>Verify Email Instantly</span>
+                  <ExternalLink className="w-3.5 h-3.5" />
+                </a>
+              </div>
+            )}
 
             <div className="space-y-3 pt-2">
               <Button
