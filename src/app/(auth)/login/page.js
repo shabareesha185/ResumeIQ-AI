@@ -6,7 +6,7 @@ import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Mail, Lock, Loader2 } from "lucide-react";
+import { Mail, Lock, Loader2, RefreshCw, AlertCircle } from "lucide-react";
 
 export default function LoginPage() {
   const [email, setEmail] = useState("");
@@ -14,11 +14,16 @@ export default function LoginPage() {
   const [loading, setLoading] = useState(false);
   const [googleLoading, setGoogleLoading] = useState(false);
   const [error, setError] = useState("");
+  const [unverifiedEmail, setUnverifiedEmail] = useState("");
+  const [isResending, setIsResending] = useState(false);
+  const [resendStatus, setResendStatus] = useState(null);
 
   async function handleSubmit(e) {
     e.preventDefault();
     setLoading(true);
     setError("");
+    setUnverifiedEmail("");
+    setResendStatus(null);
 
     try {
       const result = await signIn("credentials", {
@@ -28,7 +33,15 @@ export default function LoginPage() {
       });
 
       if (result?.error) {
-        setError(result.error === "CredentialsSignin" ? "Invalid email or password" : result.error);
+        if (result.error.includes("EMAIL_NOT_VERIFIED:")) {
+          const unverified = result.error.split("EMAIL_NOT_VERIFIED:")[1] || email;
+          setUnverifiedEmail(unverified);
+          setError("Your email address is not verified yet. Please check your inbox or resend the verification link.");
+        } else if (result.error === "CredentialsSignin") {
+          setError("Invalid email or password");
+        } else {
+          setError(result.error);
+        }
         setLoading(false);
       } else {
         window.location.href = "/dashboard";
@@ -39,6 +52,43 @@ export default function LoginPage() {
       setLoading(false);
     }
   }
+
+  const handleResend = async () => {
+    const targetEmail = unverifiedEmail || email;
+    if (!targetEmail) return;
+
+    setIsResending(true);
+    setResendStatus(null);
+
+    try {
+      const res = await fetch("/api/resend-verification", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email: targetEmail }),
+      });
+
+      const data = await res.json();
+
+      if (res.ok && data.success) {
+        setResendStatus({
+          type: "success",
+          msg: data.message || "Verification email sent successfully!",
+        });
+      } else {
+        setResendStatus({
+          type: "error",
+          msg: data.message || "Failed to resend verification email.",
+        });
+      }
+    } catch (err) {
+      setResendStatus({
+        type: "error",
+        msg: "Server connection failed.",
+      });
+    } finally {
+      setIsResending(false);
+    }
+  };
 
   async function handleGoogleLogin() {
     setGoogleLoading(true);
@@ -164,9 +214,43 @@ export default function LoginPage() {
             </div>
 
             {error && (
-              <p className="text-sm font-medium text-red-500/90 text-center animate-fade-in pl-1">
-                {error}
-              </p>
+              <div className="p-3 bg-red-950/40 border border-red-900/50 rounded-xl space-y-2 text-left">
+                <div className="flex items-start gap-2 text-xs text-red-300">
+                  <AlertCircle className="w-4 h-4 shrink-0 text-red-400 mt-0.5" />
+                  <span>{error}</span>
+                </div>
+
+                {unverifiedEmail && (
+                  <div className="pt-1">
+                    <Button
+                      type="button"
+                      onClick={handleResend}
+                      disabled={isResending}
+                      variant="outline"
+                      className="w-full h-8 text-xs bg-red-900/20 border-red-800/40 hover:bg-red-900/40 text-red-200 rounded-lg gap-1.5"
+                    >
+                      {isResending ? (
+                        <Loader2 className="w-3.5 h-3.5 animate-spin text-red-300" />
+                      ) : (
+                        <RefreshCw className="w-3.5 h-3.5 text-red-300" />
+                      )}
+                      <span>Resend Verification Email</span>
+                    </Button>
+
+                    {resendStatus && (
+                      <p
+                        className={`text-[11px] mt-2 p-2 rounded border ${
+                          resendStatus.type === "success"
+                            ? "bg-emerald-950/50 border-emerald-800/50 text-emerald-300"
+                            : "bg-rose-950/50 border-rose-800/50 text-rose-300"
+                        }`}
+                      >
+                        {resendStatus.msg}
+                      </p>
+                    )}
+                  </div>
+                )}
+              </div>
             )}
 
             <Button

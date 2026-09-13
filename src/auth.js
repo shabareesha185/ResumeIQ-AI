@@ -22,12 +22,18 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
       async authorize(credentials) {
         await connectDB();
 
+        const normalizedEmail = credentials.email?.toLowerCase().trim();
+
         const user = await User.findOne({
-          email: credentials.email,
+          email: normalizedEmail,
         });
 
         if (!user) {
           throw new Error("User not found");
+        }
+
+        if (!user.password) {
+          throw new Error("Account registered via Google. Please sign in with Google.");
         }
 
         const isMatch = await bcrypt.compare(
@@ -37,6 +43,10 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
 
         if (!isMatch) {
           throw new Error("Invalid password");
+        }
+
+        if (user.isEmailVerified === false) {
+          throw new Error("EMAIL_NOT_VERIFIED:" + user.email);
         }
 
         return {
@@ -63,10 +73,14 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
             email: user.email,
             image: user.image,
             provider: "google",
+            isEmailVerified: true,
           });
         } else {
-          // Keep google oauth image synchronized if no custom image is set
           let updated = false;
+          if (!dbUser.isEmailVerified) {
+            dbUser.isEmailVerified = true;
+            updated = true;
+          }
           if (account.provider === "google" && !dbUser.image) {
             dbUser.image = user.image;
             dbUser.provider = "google";
@@ -93,6 +107,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
         session.user.name = dbUser.name;
         session.user.email = dbUser.email;
         session.user.image = dbUser.image || "";
+        session.user.isEmailVerified = dbUser.isEmailVerified ?? true;
       }
 
       return session;

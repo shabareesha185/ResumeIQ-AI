@@ -1,5 +1,4 @@
 import { NextResponse } from "next/server";
-import bcrypt from "bcryptjs";
 import crypto from "crypto";
 
 import { connectDB } from "@/lib/db/mongodb";
@@ -9,13 +8,13 @@ import { sendVerificationEmail } from "@/lib/mail";
 
 export async function POST(req) {
   try {
-    const { name, email, password } = await req.json();
+    const { email } = await req.json();
 
-    if (!name || !email || !password) {
+    if (!email) {
       return NextResponse.json(
         {
           success: false,
-          message: "Name, email, and password are required.",
+          message: "Email address is required.",
         },
         { status: 400 },
       );
@@ -25,33 +24,32 @@ export async function POST(req) {
 
     const normalizedEmail = email.toLowerCase().trim();
 
-    const existingUser = await User.findOne({
-      email: normalizedEmail,
-    });
+    const user = await User.findOne({ email: normalizedEmail });
 
-    if (existingUser) {
+    if (!user) {
       return NextResponse.json(
         {
           success: false,
-          message: "User with this email already exists.",
+          message: "No account found with this email address.",
+        },
+        { status: 404 },
+      );
+    }
+
+    if (user.isEmailVerified) {
+      return NextResponse.json(
+        {
+          success: false,
+          message: "This email address is already verified. You can proceed to log in.",
         },
         { status: 400 },
       );
     }
 
-    const hashedPassword = await bcrypt.hash(password, 10);
-
-    const user = await User.create({
-      name,
-      email: normalizedEmail,
-      password: hashedPassword,
-      isEmailVerified: false,
-    });
-
-    // Delete existing verification tokens for this email if any
+    // Delete existing tokens
     await VerificationToken.deleteMany({ email: normalizedEmail });
 
-    // Generate crypto verification token (valid for 24h)
+    // Generate new token
     const token = crypto.randomBytes(32).toString("hex");
     const expires = new Date(Date.now() + 24 * 60 * 60 * 1000);
 
@@ -61,27 +59,19 @@ export async function POST(req) {
       expires,
     });
 
-    // Send email
     const mailResult = await sendVerificationEmail(normalizedEmail, token);
 
     return NextResponse.json({
       success: true,
-      requiresVerification: true,
-      message: "Registration successful. Please verify your email.",
+      message: "A new verification link has been sent to your email.",
       emailDelivery: mailResult,
-      user: {
-        id: user._id,
-        name: user.name,
-        email: user.email,
-        isEmailVerified: false,
-      },
     });
   } catch (error) {
-    console.error("Registration error:", error);
+    console.error("Resend verification error:", error);
     return NextResponse.json(
       {
         success: false,
-        error: error.message || "Registration failed.",
+        error: error.message || "Failed to resend verification email.",
       },
       { status: 500 },
     );

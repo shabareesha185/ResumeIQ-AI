@@ -6,7 +6,7 @@ import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { User, Mail, Lock, Loader2 } from "lucide-react";
+import { User, Mail, Lock, Loader2, CheckCircle2, ArrowRight, RefreshCw } from "lucide-react";
 
 export default function RegisterPage() {
   const router = useRouter();
@@ -17,6 +17,9 @@ export default function RegisterPage() {
 
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
+  const [registered, setRegistered] = useState(false);
+  const [isResending, setIsResending] = useState(false);
+  const [resendStatus, setResendStatus] = useState(null);
 
   async function handleSubmit(e) {
     e.preventDefault();
@@ -44,14 +47,48 @@ export default function RegisterPage() {
         return;
       }
 
-      router.push("/login");
+      setRegistered(true);
     } catch (error) {
       console.error(error);
-      setError("Something went wrong");
+      setError("Something went wrong. Please try again.");
     } finally {
       setLoading(false);
     }
   }
+
+  const handleResend = async () => {
+    setIsResending(true);
+    setResendStatus(null);
+
+    try {
+      const res = await fetch("/api/resend-verification", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email }),
+      });
+
+      const data = await res.json();
+
+      if (res.ok && data.success) {
+        setResendStatus({
+          type: "success",
+          msg: data.message || "A new verification email has been sent!",
+        });
+      } else {
+        setResendStatus({
+          type: "error",
+          msg: data.message || "Failed to resend verification email.",
+        });
+      }
+    } catch (err) {
+      setResendStatus({
+        type: "error",
+        msg: "Failed to connect to server.",
+      });
+    } finally {
+      setIsResending(false);
+    }
+  };
 
   return (
     <div className="relative flex min-h-screen items-center justify-center bg-background px-4 overflow-hidden">
@@ -71,102 +108,166 @@ export default function RegisterPage() {
       />
 
       <Card className="relative z-10 w-full max-w-md border-zinc-800/80 bg-zinc-950/70 backdrop-blur-xl shadow-2xl p-2 rounded-2xl">
-        <CardHeader className="space-y-1 text-center pt-8">
-          <Link href="/" className="inline-block text-2xl font-bold tracking-tight text-foreground mb-2 hover:opacity-90 transition">
-            ResumeIQ
-          </Link>
-          <CardTitle className="text-xl font-semibold tracking-tight text-foreground">
-            Create an account
-          </CardTitle>
-          <CardDescription className="text-sm text-zinc-400">
-            Enter your details below to get started
-          </CardDescription>
-        </CardHeader>
+        {!registered ? (
+          <>
+            <CardHeader className="space-y-1 text-center pt-8">
+              <Link href="/" className="inline-block text-2xl font-bold tracking-tight text-foreground mb-2 hover:opacity-90 transition">
+                ResumeIQ
+              </Link>
+              <CardTitle className="text-xl font-semibold tracking-tight text-foreground">
+                Create an account
+              </CardTitle>
+              <CardDescription className="text-sm text-zinc-400">
+                Enter your details below to get started
+              </CardDescription>
+            </CardHeader>
 
-        <CardContent className="space-y-4 pb-8">
-          <form onSubmit={handleSubmit} className="space-y-4">
-            <div className="space-y-1">
-              <label className="text-xs font-semibold text-zinc-400 uppercase tracking-wider pl-1">
-                Full Name
-              </label>
-              <div className="relative">
-                <User className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-zinc-500" />
-                <Input
-                  type="text"
-                  required
-                  placeholder="John Doe"
-                  className="pl-10 h-11 border-zinc-800 bg-zinc-900/30 hover:bg-zinc-900/50 text-zinc-50 placeholder-zinc-500 rounded-xl transition"
-                  value={name}
+            <CardContent className="space-y-4 pb-8">
+              <form onSubmit={handleSubmit} className="space-y-4">
+                <div className="space-y-1">
+                  <label className="text-xs font-semibold text-zinc-400 uppercase tracking-wider pl-1">
+                    Full Name
+                  </label>
+                  <div className="relative">
+                    <User className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-zinc-500" />
+                    <Input
+                      type="text"
+                      required
+                      placeholder="John Doe"
+                      className="pl-10 h-11 border-zinc-800 bg-zinc-900/30 hover:bg-zinc-900/50 text-zinc-50 placeholder-zinc-500 rounded-xl transition"
+                      value={name}
+                      disabled={loading}
+                      onChange={(e) => setName(e.target.value)}
+                    />
+                  </div>
+                </div>
+
+                <div className="space-y-1">
+                  <label className="text-xs font-semibold text-zinc-400 uppercase tracking-wider pl-1">
+                    Email Address
+                  </label>
+                  <div className="relative">
+                    <Mail className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-zinc-500" />
+                    <Input
+                      type="email"
+                      required
+                      placeholder="name@example.com"
+                      className="pl-10 h-11 border-zinc-800 bg-zinc-900/30 hover:bg-zinc-900/50 text-zinc-50 placeholder-zinc-500 rounded-xl transition"
+                      value={email}
+                      disabled={loading}
+                      onChange={(e) => setEmail(e.target.value)}
+                    />
+                  </div>
+                </div>
+
+                <div className="space-y-1">
+                  <label className="text-xs font-semibold text-zinc-400 uppercase tracking-wider pl-1">
+                    Password
+                  </label>
+                  <div className="relative">
+                    <Lock className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-zinc-500" />
+                    <Input
+                      type="password"
+                      required
+                      placeholder="••••••••"
+                      className="pl-10 h-11 border-zinc-800 bg-zinc-900/30 hover:bg-zinc-900/50 text-zinc-50 placeholder-zinc-500 rounded-xl transition"
+                      value={password}
+                      disabled={loading}
+                      onChange={(e) => setPassword(e.target.value)}
+                    />
+                  </div>
+                </div>
+
+                {error && (
+                  <p className="text-sm font-medium text-red-500/90 text-center pl-1 animate-fade-in">
+                    {error}
+                  </p>
+                )}
+
+                <Button
+                  type="submit"
                   disabled={loading}
-                  onChange={(e) => setName(e.target.value)}
-                />
-              </div>
-            </div>
+                  className="w-full h-11 bg-white hover:bg-zinc-200 text-black font-semibold rounded-xl transition-all shadow-md active:scale-[0.99] mt-2"
+                >
+                  {loading ? (
+                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                  ) : null}
+                  {loading ? "Creating Account..." : "Create Account"}
+                </Button>
+              </form>
 
-            <div className="space-y-1">
-              <label className="text-xs font-semibold text-zinc-400 uppercase tracking-wider pl-1">
-                Email Address
-              </label>
-              <div className="relative">
-                <Mail className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-zinc-500" />
-                <Input
-                  type="email"
-                  required
-                  placeholder="name@example.com"
-                  className="pl-10 h-11 border-zinc-800 bg-zinc-900/30 hover:bg-zinc-900/50 text-zinc-50 placeholder-zinc-500 rounded-xl transition"
-                  value={email}
-                  disabled={loading}
-                  onChange={(e) => setEmail(e.target.value)}
-                />
-              </div>
-            </div>
-
-            <div className="space-y-1">
-              <label className="text-xs font-semibold text-zinc-400 uppercase tracking-wider pl-1">
-                Password
-              </label>
-              <div className="relative">
-                <Lock className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-zinc-500" />
-                <Input
-                  type="password"
-                  required
-                  placeholder="••••••••"
-                  className="pl-10 h-11 border-zinc-800 bg-zinc-900/30 hover:bg-zinc-900/50 text-zinc-50 placeholder-zinc-500 rounded-xl transition"
-                  value={password}
-                  disabled={loading}
-                  onChange={(e) => setPassword(e.target.value)}
-                />
-              </div>
-            </div>
-
-            {error && (
-              <p className="text-sm font-medium text-red-500/90 text-center pl-1 animate-fade-in">
-                {error}
+              <p className="text-center text-sm text-zinc-400 pt-2">
+                Already have an account?{" "}
+                <Link
+                  href="/login"
+                  className="font-medium text-blue-400 hover:text-blue-300 hover:underline transition"
+                >
+                  Login
+                </Link>
               </p>
-            )}
+            </CardContent>
+          </>
+        ) : (
+          <div className="p-6 text-center space-y-5">
+            <div className="w-16 h-16 bg-sky-500/10 border border-sky-500/20 rounded-2xl flex items-center justify-center mx-auto text-sky-400">
+              <Mail className="w-8 h-8" />
+            </div>
 
-            <Button
-              type="submit"
-              disabled={loading}
-              className="w-full h-11 bg-white hover:bg-zinc-200 text-black font-semibold rounded-xl transition-all shadow-md active:scale-[0.99] mt-2"
-            >
-              {loading ? (
-                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-              ) : null}
-              {loading ? "Creating Account..." : "Create Account"}
-            </Button>
-          </form>
+            <div>
+              <h2 className="text-2xl font-bold text-zinc-100">Check Your Email</h2>
+              <p className="text-sm text-zinc-400 mt-2">
+                We've sent a verification link to <strong className="text-zinc-200">{email}</strong>.
+              </p>
+            </div>
 
-          <p className="text-center text-sm text-zinc-400 pt-2">
-            Already have an account?{" "}
-            <Link
-              href="/login"
-              className="font-medium text-blue-400 hover:text-blue-300 hover:underline transition"
-            >
-              Login
-            </Link>
-          </p>
-        </CardContent>
+            <div className="bg-zinc-900/60 border border-zinc-800/80 p-4 rounded-xl text-left text-xs text-zinc-300 space-y-2">
+              <div className="flex items-start gap-2">
+                <CheckCircle2 className="w-4 h-4 text-emerald-400 shrink-0 mt-0.5" />
+                <span>Click the link in the email to activate your account.</span>
+              </div>
+              <div className="flex items-start gap-2">
+                <CheckCircle2 className="w-4 h-4 text-emerald-400 shrink-0 mt-0.5" />
+                <span>The link will expire in 24 hours.</span>
+              </div>
+            </div>
+
+            <div className="space-y-3 pt-2">
+              <Button
+                onClick={handleResend}
+                disabled={isResending}
+                variant="outline"
+                className="w-full h-11 border-zinc-800 bg-zinc-900/40 hover:bg-zinc-900 text-zinc-200 font-medium rounded-xl gap-2"
+              >
+                {isResending ? (
+                  <Loader2 className="w-4 h-4 animate-spin text-sky-400" />
+                ) : (
+                  <RefreshCw className="w-4 h-4 text-sky-400" />
+                )}
+                <span>{isResending ? "Resending Email..." : "Resend Verification Email"}</span>
+              </Button>
+
+              {resendStatus && (
+                <p
+                  className={`text-xs p-2.5 rounded-lg border ${
+                    resendStatus.type === "success"
+                      ? "bg-emerald-950/40 border-emerald-800/40 text-emerald-300"
+                      : "bg-rose-950/40 border-rose-800/40 text-rose-300"
+                  }`}
+                >
+                  {resendStatus.msg}
+                </p>
+              )}
+
+              <Link
+                href="/login"
+                className="w-full inline-flex items-center justify-center gap-2 py-3 px-4 rounded-xl bg-white hover:bg-zinc-200 text-black font-semibold text-sm transition-all shadow-md"
+              >
+                <span>Proceed to Login</span>
+                <ArrowRight className="w-4 h-4" />
+              </Link>
+            </div>
+          </div>
+        )}
       </Card>
     </div>
   );
