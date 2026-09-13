@@ -33,14 +33,25 @@ export default function LoginPage() {
       });
 
       if (result?.error) {
-        if (result.error.includes("EMAIL_NOT_VERIFIED:")) {
-          const unverified = result.error.split("EMAIL_NOT_VERIFIED:")[1] || email;
-          setUnverifiedEmail(unverified);
-          setError("Your email address is not verified yet. Please check your inbox or resend the verification link.");
-        } else if (result.error === "CredentialsSignin") {
+        // Query check-status API to determine exact failure cause
+        try {
+          const statusRes = await fetch("/api/auth/check-status", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ email }),
+          });
+          const userStatus = await statusRes.json();
+
+          if (userStatus?.exists && userStatus?.isEmailVerified === false) {
+            setUnverifiedEmail(userStatus.email || email);
+            setError("Your email address is not verified yet. Please check your inbox or resend the verification link.");
+          } else if (userStatus?.exists && userStatus?.provider === "google") {
+            setError("This account was registered via Google. Please click 'Continue with Google' above.");
+          } else {
+            setError("Invalid email or password");
+          }
+        } catch (checkErr) {
           setError("Invalid email or password");
-        } else {
-          setError(result.error);
         }
         setLoading(false);
       } else {
@@ -48,7 +59,7 @@ export default function LoginPage() {
       }
     } catch (err) {
       console.error(err);
-      setError("An unexpected error occurred");
+      setError("An unexpected error occurred during login");
       setLoading(false);
     }
   }

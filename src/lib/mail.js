@@ -2,10 +2,16 @@ import nodemailer from "nodemailer";
 
 /**
  * Sends a verification email to the specified address.
+ * Uses dynamic requestOrigin if provided, falling back to process.env.AUTH_URL.
  * If SMTP credentials are missing, logs the link to the console for seamless local development.
  */
-export async function sendVerificationEmail(email, token) {
-  const baseUrl = process.env.AUTH_URL || "http://localhost:3000";
+export async function sendVerificationEmail(email, token, requestOrigin = "") {
+  let baseUrl = requestOrigin;
+  if (!baseUrl) {
+    baseUrl = process.env.AUTH_URL || "http://localhost:3000";
+  }
+  baseUrl = baseUrl.replace(/\/$/, "");
+
   const confirmLink = `${baseUrl}/verify-email?token=${encodeURIComponent(token)}&email=${encodeURIComponent(email)}`;
 
   const host = process.env.SMTP_HOST;

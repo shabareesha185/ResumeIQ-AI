@@ -25,8 +25,9 @@ export async function POST(req) {
 
     const normalizedEmail = email.toLowerCase().trim();
 
+    // Case-insensitive user lookup
     const existingUser = await User.findOne({
-      email: normalizedEmail,
+      email: { $regex: new RegExp(`^${normalizedEmail}$`, "i") },
     });
 
     if (existingUser) {
@@ -61,8 +62,11 @@ export async function POST(req) {
       expires,
     });
 
-    // Send email
-    const mailResult = await sendVerificationEmail(normalizedEmail, token);
+    // Extract current origin
+    const origin = req.headers.get("origin") || req.nextUrl?.origin || "";
+
+    // Send email with dynamic origin
+    const mailResult = await sendVerificationEmail(normalizedEmail, token, origin);
 
     return NextResponse.json({
       success: true,

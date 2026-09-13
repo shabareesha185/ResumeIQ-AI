@@ -24,7 +24,9 @@ export async function POST(req) {
 
     const normalizedEmail = email.toLowerCase().trim();
 
-    const user = await User.findOne({ email: normalizedEmail });
+    const user = await User.findOne({
+      email: { $regex: new RegExp(`^${normalizedEmail}$`, "i") },
+    });
 
     if (!user) {
       return NextResponse.json(
@@ -36,7 +38,7 @@ export async function POST(req) {
       );
     }
 
-    if (user.isEmailVerified) {
+    if (user.isEmailVerified !== false) {
       return NextResponse.json(
         {
           success: false,
@@ -59,7 +61,9 @@ export async function POST(req) {
       expires,
     });
 
-    const mailResult = await sendVerificationEmail(normalizedEmail, token);
+    const origin = req.headers.get("origin") || req.nextUrl?.origin || "";
+
+    const mailResult = await sendVerificationEmail(normalizedEmail, token, origin);
 
     return NextResponse.json({
       success: true,

@@ -4,6 +4,22 @@ import { connectDB } from "@/lib/db/mongodb";
 import User from "@/models/User";
 import VerificationToken from "@/models/VerificationToken";
 
+export async function GET(req) {
+  const { searchParams } = new URL(req.url);
+  const token = searchParams.get("token");
+  const email = searchParams.get("email");
+
+  const origin = req.headers.get("origin") || req.nextUrl?.origin || "http://localhost:3000";
+
+  if (!token || !email) {
+    return NextResponse.redirect(`${origin}/verify-email?error=invalid_params`);
+  }
+
+  return NextResponse.redirect(
+    `${origin}/verify-email?token=${encodeURIComponent(token)}&email=${encodeURIComponent(email)}`,
+  );
+}
+
 export async function POST(req) {
   try {
     const { token, email } = await req.json();
@@ -25,14 +41,14 @@ export async function POST(req) {
     // Find token record
     const existingToken = await VerificationToken.findOne({
       token,
-      email: normalizedEmail,
+      email: { $regex: new RegExp(`^${normalizedEmail}$`, "i") },
     });
 
     if (!existingToken) {
       return NextResponse.json(
         {
           success: false,
-          message: "Invalid or expired verification token.",
+          message: "Invalid or expired verification link.",
         },
         { status: 400 },
       );
@@ -45,14 +61,17 @@ export async function POST(req) {
       return NextResponse.json(
         {
           success: false,
-          message: "Verification token has expired. Please request a new verification email.",
+          message: "Verification link has expired. Please request a new link below.",
         },
         { status: 400 },
       );
     }
 
     // Find and update user
-    const user = await User.findOne({ email: normalizedEmail });
+    const user = await User.findOne({
+      email: { $regex: new RegExp(`^${normalizedEmail}$`, "i") },
+    });
+
     if (!user) {
       return NextResponse.json(
         {

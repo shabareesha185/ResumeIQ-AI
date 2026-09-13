@@ -11,6 +11,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
     Google({
       clientId: process.env.AUTH_GOOGLE_ID,
       clientSecret: process.env.AUTH_GOOGLE_SECRET,
+      allowDangerousEmailAccountLinking: true,
     }),
 
     Credentials({
@@ -22,10 +23,15 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
       async authorize(credentials) {
         await connectDB();
 
-        const normalizedEmail = credentials.email?.toLowerCase().trim();
+        if (!credentials?.email || !credentials?.password) {
+          throw new Error("Missing email or password");
+        }
 
+        const normalizedEmail = credentials.email.toLowerCase().trim();
+
+        // Case-insensitive email search
         const user = await User.findOne({
-          email: normalizedEmail,
+          email: { $regex: new RegExp(`^${normalizedEmail}$`, "i") },
         });
 
         if (!user) {
@@ -45,6 +51,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
           throw new Error("Invalid password");
         }
 
+        // Only block if explicitly set to false
         if (user.isEmailVerified === false) {
           throw new Error("EMAIL_NOT_VERIFIED:" + user.email);
         }
@@ -60,17 +67,19 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
 
   callbacks: {
     async signIn({ user, account }) {
-      if (account.provider === "google") {
+      if (account?.provider === "google") {
         await connectDB();
 
+        const normalizedEmail = user.email?.toLowerCase().trim();
+
         let dbUser = await User.findOne({
-          email: user.email,
+          email: { $regex: new RegExp(`^${normalizedEmail}$`, "i") },
         });
 
         if (!dbUser) {
           dbUser = await User.create({
             name: user.name,
-            email: user.email,
+            email: normalizedEmail,
             image: user.image,
             provider: "google",
             isEmailVerified: true,
@@ -81,9 +90,8 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
             dbUser.isEmailVerified = true;
             updated = true;
           }
-          if (account.provider === "google" && !dbUser.image) {
+          if (!dbUser.image && user.image) {
             dbUser.image = user.image;
-            dbUser.provider = "google";
             updated = true;
           }
           if (updated) {
@@ -96,10 +104,14 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
     },
 
     async session({ session }) {
+      if (!session?.user?.email) return session;
+
       await connectDB();
 
+      const normalizedEmail = session.user.email.toLowerCase().trim();
+
       const dbUser = await User.findOne({
-        email: session.user.email,
+        email: { $regex: new RegExp(`^${normalizedEmail}$`, "i") },
       });
 
       if (dbUser) {
@@ -107,7 +119,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
         session.user.name = dbUser.name;
         session.user.email = dbUser.email;
         session.user.image = dbUser.image || "";
-        session.user.isEmailVerified = dbUser.isEmailVerified ?? true;
+        session.user.isEmailVerified = dbUser.isEmailVerified !== false;
       }
 
       return session;
