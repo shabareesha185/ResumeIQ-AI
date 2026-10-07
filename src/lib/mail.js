@@ -1,10 +1,8 @@
 import nodemailer from "nodemailer";
 
 /**
- * Sends a verification email to the specified address.
- * 1. Resend REST API (if RESEND_API_KEY or SMTP_PASS starting with re_ is set)
- * 2. Nodemailer SMTP (if SMTP_HOST is set)
- * 3. Dev Console Mode (fallback if no keys are provided)
+ * Sends a verification email to the specified address via SMTP (Gmail / Custom SMTP).
+ * Falls back to logging in console if SMTP environment variables are missing.
  */
 export async function sendVerificationEmail(email, token, requestOrigin = "") {
   let baseUrl = requestOrigin;
@@ -15,15 +13,16 @@ export async function sendVerificationEmail(email, token, requestOrigin = "") {
 
   const confirmLink = `${baseUrl}/verify-email?token=${encodeURIComponent(token)}&email=${encodeURIComponent(email)}`;
 
-  const resendApiKey =
-    process.env.RESEND_API_KEY ||
-    (process.env.SMTP_PASS?.startsWith("re_") ? process.env.SMTP_PASS : null);
-
   const host = process.env.SMTP_HOST;
   const port = process.env.SMTP_PORT ? parseInt(process.env.SMTP_PORT, 10) : 587;
   const user = process.env.SMTP_USER;
   const pass = process.env.SMTP_PASS;
-  const from = process.env.SMTP_FROM || `"ResumeIQ AI" <onboarding@resend.dev>`;
+
+  const defaultFrom = host?.includes("gmail")
+    ? `"ResumeIQ AI" <${user || "noreply@resumeiq.ai"}>`
+    : `"ResumeIQ AI" <noreply@resumeiq.ai>`;
+
+  const from = process.env.SMTP_FROM || defaultFrom;
 
   const htmlContent = `
     <div style="font-family: 'Inter', system-ui, -apple-system, sans-serif; max-width: 600px; margin: 0 auto; padding: 32px; background-color: #0d1117; color: #f0f6fc; border-radius: 16px; border: 1px solid rgba(255, 255, 255, 0.1);">
@@ -57,102 +56,54 @@ export async function sendVerificationEmail(email, token, requestOrigin = "") {
     </div>
   `;
 
-  // 1. RESEND REST API MODE (Bypasses firewall / port blocking issues)
-  if (resendApiKey) {
-    try {
-      const resendFrom = process.env.SMTP_FROM || "ResumeIQ AI <onboarding@resend.dev>";
-      const response = await fetch("https://api.resend.com/emails", {
-        method: "POST",
-        headers: {
-          Authorization: `Bearer ${resendApiKey}`,
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          from: resendFrom,
-          to: [email],
-          subject: "Verify your email - ResumeIQ AI",
-          html: htmlContent,
-        }),
-      });
+  // Development Fallback: Log to console if SMTP credentials are missing
+  if (!host || !user || !pass) {
+    console.log("\n=======================================================");
+    console.log("             [DEVELOPMENT EMAIL SERVICE]");
+    console.log(` To: ${email}`);
+    console.log(` Verification Link: ${confirmLink}`);
+    console.log("=======================================================\n");
 
-      const resendData = await response.json();
-
-      if (!response.ok) {
-        console.error("Resend API Delivery Error:", resendData);
-        return {
-          success: false,
-          mode: "resend-api",
-          error: resendData.message || resendData.name || "Resend API call failed",
-          link: confirmLink,
-        };
-      }
-
-      console.log(`[RESEND API] Email successfully sent to ${email} (ID: ${resendData.id})`);
-      return {
-        success: true,
-        delivered: true,
-        mode: "resend-api",
-        id: resendData.id,
-      };
-    } catch (err) {
-      console.error("Failed to send email via Resend API:", err);
-      return {
-        success: false,
-        mode: "resend-api",
-        error: err.message,
-        link: confirmLink,
-      };
-    }
+    return {
+      success: true,
+      delivered: false,
+      mode: "console",
+      link: confirmLink,
+    };
   }
 
-  // 2. NODEMAILER SMTP MODE (Gmail / Custom SMTP)
-  if (host && user && pass) {
-    try {
-      const transporter = nodemailer.createTransport({
-        host,
-        port,
-        secure: port === 465,
-        auth: {
-          user,
-          pass,
-        },
-      });
+  // SMTP Mode (Gmail App Password / Custom SMTP)
+  try {
+    const transporter = nodemailer.createTransport({
+      host,
+      port,
+      secure: port === 465,
+      auth: {
+        user,
+        pass,
+      },
+    });
 
-      await transporter.sendMail({
-        from,
-        to: email,
-        subject: "Verify your email - ResumeIQ AI",
-        html: htmlContent,
-      });
+    await transporter.sendMail({
+      from,
+      to: email,
+      subject: "Verify your email - ResumeIQ AI",
+      html: htmlContent,
+    });
 
-      console.log(`[SMTP] Email successfully sent to ${email}`);
-      return {
-        success: true,
-        delivered: true,
-        mode: "smtp",
-      };
-    } catch (error) {
-      console.error("Failed to send verification email via SMTP:", error);
-      return {
-        success: false,
-        mode: "smtp",
-        error: error.message,
-        link: confirmLink,
-      };
-    }
+    console.log(`[SMTP] Email successfully sent to ${email}`);
+    return {
+      success: true,
+      delivered: true,
+      mode: "smtp",
+    };
+  } catch (error) {
+    console.error("Failed to send verification email via SMTP:", error);
+    return {
+      success: false,
+      mode: "smtp",
+      error: error.message,
+      link: confirmLink,
+    };
   }
-
-  // 3. DEVELOPMENT CONSOLE FALLBACK MODE
-  console.log("\n=======================================================");
-  console.log("             [DEVELOPMENT EMAIL SERVICE]");
-  console.log(` To: ${email}`);
-  console.log(` Verification Link: ${confirmLink}`);
-  console.log("=======================================================\n");
-
-  return {
-    success: true,
-    delivered: false,
-    mode: "console",
-    link: confirmLink,
-  };
 }

@@ -65,11 +65,14 @@ export async function POST(req) {
 
     const mailResult = await sendVerificationEmail(normalizedEmail, token, origin);
 
+    // devLink is ONLY populated if real email delivery was not possible
+    const devLink = (!mailResult.delivered || mailResult.mode === "console") ? mailResult.link : null;
+
     return NextResponse.json({
       success: true,
       message: "A new verification link has been generated.",
       emailDelivery: mailResult,
-      devLink: mailResult.link || null,
+      devLink,
       mailError: mailResult.error || null,
     });
   } catch (error) {

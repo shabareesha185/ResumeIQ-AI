@@ -16,6 +16,7 @@ export default function LoginPage() {
   const [error, setError] = useState("");
   const [unverifiedEmail, setUnverifiedEmail] = useState("");
   const [devLink, setDevLink] = useState(null);
+  const [mailErrorMsg, setMailErrorMsg] = useState("");
   const [isResending, setIsResending] = useState(false);
   const [resendStatus, setResendStatus] = useState(null);
 
@@ -25,6 +26,7 @@ export default function LoginPage() {
     setError("");
     setUnverifiedEmail("");
     setDevLink(null);
+    setMailErrorMsg("");
     setResendStatus(null);
 
     try {
@@ -72,6 +74,7 @@ export default function LoginPage() {
 
     setIsResending(true);
     setResendStatus(null);
+    setMailErrorMsg("");
 
     try {
       const res = await fetch("/api/resend-verification", {
@@ -86,9 +89,14 @@ export default function LoginPage() {
         if (data.devLink) {
           setDevLink(data.devLink);
         }
+        if (data.mailError) {
+          setMailErrorMsg(data.mailError);
+        }
         setResendStatus({
           type: "success",
-          msg: data.message || "Verification link generated!",
+          msg: data.emailDelivery?.delivered
+            ? "Verification email sent to your inbox!"
+            : "Verification link generated successfully!",
         });
       } else {
         setResendStatus({
@@ -257,8 +265,17 @@ export default function LoginPage() {
                       <div className="p-2.5 bg-amber-950/40 border border-amber-800/50 rounded-lg text-left space-y-1.5">
                         <div className="flex items-center gap-1 text-[11px] text-amber-300 font-medium">
                           <Terminal className="w-3.5 h-3.5 text-amber-400 shrink-0" />
-                          <span>Dev Mode (SMTP Unconfigured)</span>
+                          <span>
+                            {mailErrorMsg ? "Resend Delivery Notice" : "Dev Mode Verification"}
+                          </span>
                         </div>
+                        {mailErrorMsg && (
+                          <p className="text-[11px] text-amber-200/90 leading-normal">
+                            {mailErrorMsg.includes("testing emails to your own email address")
+                              ? "Resend test domain (onboarding@resend.dev) restricts delivery to your Resend account owner email. Use instant verification below for test addresses."
+                              : mailErrorMsg}
+                          </p>
+                        )}
                         <a
                           href={devLink}
                           className="w-full inline-flex items-center justify-center gap-1.5 py-1.5 px-2 rounded bg-amber-500/20 hover:bg-amber-500/30 border border-amber-500/40 text-amber-200 text-[11px] font-medium transition"

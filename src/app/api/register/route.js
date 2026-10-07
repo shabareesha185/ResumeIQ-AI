@@ -68,12 +68,15 @@ export async function POST(req) {
     // Send email with dynamic origin
     const mailResult = await sendVerificationEmail(normalizedEmail, token, origin);
 
+    // devLink is ONLY populated if real email delivery was not possible
+    const devLink = (!mailResult.delivered || mailResult.mode === "console") ? mailResult.link : null;
+
     return NextResponse.json({
       success: true,
       requiresVerification: true,
       message: "Registration successful. Please verify your email.",
       emailDelivery: mailResult,
-      devLink: mailResult.link || null,
+      devLink,
       mailError: mailResult.error || null,
       user: {
         id: user._id,

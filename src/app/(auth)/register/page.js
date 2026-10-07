@@ -19,6 +19,7 @@ export default function RegisterPage() {
   const [error, setError] = useState("");
   const [registered, setRegistered] = useState(false);
   const [devLink, setDevLink] = useState(null);
+  const [mailErrorMsg, setMailErrorMsg] = useState("");
   const [isResending, setIsResending] = useState(false);
   const [resendStatus, setResendStatus] = useState(null);
 
@@ -52,6 +53,9 @@ export default function RegisterPage() {
       if (data.devLink) {
         setDevLink(data.devLink);
       }
+      if (data.mailError) {
+        setMailErrorMsg(data.mailError);
+      }
     } catch (error) {
       console.error(error);
       setError("Something went wrong. Please try again.");
@@ -63,6 +67,7 @@ export default function RegisterPage() {
   const handleResend = async () => {
     setIsResending(true);
     setResendStatus(null);
+    setMailErrorMsg("");
 
     try {
       const res = await fetch("/api/resend-verification", {
@@ -77,9 +82,14 @@ export default function RegisterPage() {
         if (data.devLink) {
           setDevLink(data.devLink);
         }
+        if (data.mailError) {
+          setMailErrorMsg(data.mailError);
+        }
         setResendStatus({
           type: "success",
-          msg: data.message || "A new verification link has been generated!",
+          msg: data.emailDelivery?.delivered
+            ? "Verification email sent to your inbox!"
+            : "Verification link generated successfully!",
         });
       } else {
         setResendStatus({
@@ -242,11 +252,19 @@ export default function RegisterPage() {
               <div className="p-3 bg-amber-950/40 border border-amber-800/50 rounded-xl text-left space-y-2">
                 <div className="flex items-center gap-1.5 text-xs text-amber-300 font-semibold">
                   <Terminal className="w-4 h-4 text-amber-400" />
-                  <span>Dev Testing Mode (SMTP Unconfigured)</span>
+                  <span>{mailErrorMsg ? "Resend Delivery Notice" : "Dev Testing Mode"}</span>
                 </div>
-                <p className="text-[11px] text-amber-200/80">
-                  SMTP credentials are not configured in environment settings. Click below to verify instantly for testing:
-                </p>
+                {mailErrorMsg ? (
+                  <p className="text-[11px] text-amber-200/90 leading-normal">
+                    {mailErrorMsg.includes("testing emails to your own email address")
+                      ? "Resend test domain (onboarding@resend.dev) restricts delivery to your Resend account owner email. Use instant verification below for test addresses."
+                      : mailErrorMsg}
+                  </p>
+                ) : (
+                  <p className="text-[11px] text-amber-200/80">
+                    SMTP credentials are not configured in environment settings. Click below to verify instantly for testing:
+                  </p>
+                )}
                 <a
                   href={devLink}
                   className="w-full inline-flex items-center justify-center gap-2 py-2 px-3 rounded-lg bg-amber-500/20 hover:bg-amber-500/30 border border-amber-500/40 text-amber-200 text-xs font-medium transition"
